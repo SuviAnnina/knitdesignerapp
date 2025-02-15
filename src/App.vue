@@ -1,15 +1,24 @@
 <template>
-  <!-- <HelloWorld msg="Welcome to Your Vue.js App" /> -->
-  <div>P5 Grid!
-
-    <P5Grid />
+  <div>
+    <YarnManager :mainColor="mainColor" :color1="color1" @update-colors="updateColors" />
+   App.vuen mainColor väri: {{ mainColor }}
+    <P5Grid :mainColor="mainColor" :color1="color1" />
   </div>
 </template>
 
 <script setup>
-// import HelloWorld from './components/HelloWorld.vue'
+import { ref } from "vue";
+import YarnManager from './components/YarnManager.vue';
 import P5Grid from './components/P5Grid.vue';
 
+const mainColor = ref('#ffffff');
+const color1 = ref('#ff0000');
+
+const updateColors = (newColors) => {
+  console.log('updateColors function received: ', newColors);
+  mainColor.value = newColors.mainColor;
+  color1.value = newColors.color1;
+};
 </script>
 
 <style>
