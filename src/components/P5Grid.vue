@@ -10,13 +10,23 @@ const props = defineProps({
   color1: String
 });
 
+// TODO: Check the rest of the grid works!
+// TODO: Add pre-made grid options
+
 const normalizedMainColor = computed(() => props.mainColor.startsWith("#") ? props.mainColor : `#${props.mainColor}`);
 const normalizedColor1 = computed(() => props.color1.startsWith("#") ? props.color1 : `#${props.color1}`);
+function updateCanvas(){
+  if (p5Instance){
+    p5Instance.redraw();
+  }
+}
+
 
 const sketch = (p) => {
   p.setup = () => {
     p.createCanvas(600, 1000);
     p.background("#EDF9EB"); // canvas background color
+    p.noLoop();
     
     rects.value = [];
 
@@ -113,8 +123,7 @@ const sketch = (p) => {
             ? normalizedColor1.value
             : normalizedMainColor.value;
 
-      // Trigger a redraw after updating the array
-      p.redraw();
+      updateCanvas();
     } else {
       console.log("Clicked outside the rectangles");
     }
@@ -140,6 +149,7 @@ watch(() => [props.mainColor, props.color1], ([newMainColor, newColor1]) => {
       rect.color = normalizedMainColor.value;
     }
   });
+  updateCanvas();
   console.log("Updated rect colors:", rects.value.map(r => r.color));
 });
 

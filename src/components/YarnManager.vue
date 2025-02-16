@@ -14,6 +14,10 @@ const emitColorChange = () => {
 watch([mainColor, color1], () => {
     emitColorChange();
 });
+
+// TODO: add input for user to type hex color
+// TODO: add option for user to add colors
+
 </script>
 <template>
     <div>
