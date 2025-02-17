@@ -155,27 +155,14 @@ onMounted(() => {
 
   document.getElementById("p5-container").addEventListener("contextmenu", (e) => {
     e.preventDefault();
-
   });
 });
 
-// if the user changes the colors, re-render the grid accordingly
+// if the chosen colors change, update canvas
 watch(
-  () => [patternColors.mainColor, patternColors.color1],
-  ([newMainColor, newColor1], [oldMainColor, oldColor1]) => {
-    console.log("Detected color change:", { newMainColor, oldMainColor, newColor1, oldColor1 });
-
-    rects.value.forEach((rect) => {
-      // Update colorKey if conditions are met
-      if (rect.colorKey === "mainColor" && patternColors.mainColor === oldMainColor) {
-        rect.colorKey = "mainColor"; 
-      } else if (rect.colorKey === "color1" && patternColors.color1 === oldColor1) {
-        rect.colorKey = "color1";
-      }
-    });
-
+  () => [patternColors],
+  () => {
     updateCanvas();
-   // console.log("Updated rect colors:", rects.value.map(r => patternColors[r.colorKey]));
   },
   { deep: true }
 );
