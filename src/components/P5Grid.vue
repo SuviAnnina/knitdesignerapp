@@ -12,6 +12,7 @@ const props = defineProps({
 
 // TODO: Check the rest of the grid works!
 // TODO: Add pre-made grid options
+// TODO: if the mainColor is dark, change the rectangle lines light ( stroke() )
 
 const normalizedMainColor = computed(() => props.mainColor.startsWith("#") ? props.mainColor : `#${props.mainColor}`);
 const normalizedColor1 = computed(() => props.color1.startsWith("#") ? props.color1 : `#${props.color1}`);
@@ -43,21 +44,20 @@ const sketch = (p) => {
         let y = startY + row * rectHeight;
         rects.value.push({ x, y, w: rectWidth, h: rectHeight, color: normalizedMainColor.value });
       }
+    } 
+    // 4 x 4
+    for (let row = 0; row < 4; row++){
+      for (let col = 0; col < 4; col++) {
+        let x = startX + col * rectWidth;
+        let y = startY + 3 * rectHeight + row * rectHeight;
+        rects.value.push({ x, y, w: rectWidth, h: rectHeight, color: normalizedMainColor.value });
+      }
     }
-  };
-
-  p.draw = () => {
-    p.background("#EDF9EB"); // canvas background color
-    rects.value.forEach(({ x, y, w, h, color }) => {
-      console.log(rects.value[0].color);
-      p.fill(color);
-      p.rect(x, y, w, h);
-    });
     /* 
-        // Second grid: 4 rows, 4 columns
-        let secondGridStartY = startY + 3 * rectHeight;
-        for (let row = 0; row < 4; row++) {
-          for (let col = 0; col < 4; col++) {
+    // Second grid: 4 rows, 4 columns
+    let secondGridStartY = startY + 3 * rectHeight;
+    for (let row = 0; row < 4; row++) {
+      for (let col = 0; col < 4; col++) {
             let x = startX + col * rectWidth;
             let y = secondGridStartY + row * rectHeight;
             p.rect(x, y, rectWidth, rectHeight);
@@ -105,6 +105,15 @@ const sketch = (p) => {
         } */
   };
 
+  p.draw = () => {
+    p.background("#EDF9EB"); // canvas background color
+    rects.value.forEach(({ x, y, w, h, color }) => {
+      console.log(rects.value[0].color);
+      p.fill(color);
+      p.rect(x, y, w, h);
+    });
+  };
+
   p.mousePressed = () => {
   // Check if the mouse is inside the canvas
   if (p.mouseX >= 0 && p.mouseX <= p.width && p.mouseY >= 0 && p.mouseY <= p.height) {
@@ -142,16 +151,22 @@ onMounted(() => {
   });
 });
 
-watch(() => [props.mainColor, props.color1], ([newMainColor, newColor1]) => {
-  console.log("P5Grid received new colors:", newMainColor, newColor1);
+watch(() => [normalizedMainColor.value, normalizedColor1.value], ([newMainColor, newColor1], [oldMainColor, oldColor1]) => {
+  console.log("Detected color change:", { newMainColor, oldMainColor, newColor1, oldColor1 });
+
   rects.value.forEach((rect) => {
-    if (rect.color !== normalizedColor1.value) {
-      rect.color = normalizedMainColor.value;
+    if (rect.color === oldMainColor) {
+      rect.color = newMainColor;
+    } else if (rect.color === oldColor1) {
+      rect.color = newColor1;
     }
   });
+
   updateCanvas();
   console.log("Updated rect colors:", rects.value.map(r => r.color));
 });
+
+
 
 onBeforeUnmount(() => {
   p5Instance.remove();
