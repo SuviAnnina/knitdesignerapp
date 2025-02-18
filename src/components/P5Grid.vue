@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, ref, reactive, watch, computed, onMounted, onBeforeUnmount } from "vue";
+import { defineProps, ref, reactive, nextTick, watch, computed, onMounted, onBeforeUnmount } from "vue";
 import p5 from "p5";
 
 let p5Instance;
@@ -110,7 +110,7 @@ const sketch = (p) => {
     };
 
     p.draw = () => {
-      p.background("#EDF9EB"); // canvas background color
+      //p.background("#EDF9EB"); // canvas background color
       rects.value.forEach(({ x, y, w, h, colorKey }) => {
         //console.log(rects.value[0].colorKey);
         p.fill(patternColors[colorKey]);
@@ -122,7 +122,7 @@ const sketch = (p) => {
       });
     };
 
-      p.mousePressed = () => {
+      p.mousePressed = async () => {
     // Check if the mouse is inside the canvas
     if (p.mouseX >= 0 && p.mouseX <= p.width && p.mouseY >= 0 && p.mouseY <= p.height) {
       // Find the index of the clicked rectangle in the rects array
@@ -140,6 +140,8 @@ const sketch = (p) => {
           clickedRect.colorKey === "mainColor" 
           ? "color1" 
           : "mainColor";
+
+        await nextTick();
         // re-render grid with correct colors
         updateCanvas();
       } else {
