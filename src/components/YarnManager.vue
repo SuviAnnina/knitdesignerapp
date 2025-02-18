@@ -15,21 +15,38 @@ watch([mainColor, color1], () => {
     emitColorChange();
 });
 
-// TODO: add input for user to type hex color (+rgb?)
 // TODO: add option for user to add colors
 
 </script>
 <template>
     <div>
         <p>Pick colors!</p>
-        Background: <ColorPicker v-model="mainColor" @input="emitColorChange"/> <br />
+        Background: <ColorPicker v-model="mainColor" @input="emitColorChange"/>
+        <input v-model="mainColor" placeholder="#123456" />
+        <br />
        
-        Accent: <ColorPicker v-model="color1" @input="emitColorChange"/>
-
+        Color 1:  <ColorPicker v-model="color1" @input="emitColorChange"/>
+        <input v-model="color1" placeholder="#123456"/>
 
     </div>
 </template>
 
 <style>
+input {
+  width: 55px; 
+  border: none;
+  border-bottom: 1px solid #000000;
+  outline: none;
+  padding: 2px;
+  margin-left: 6px;
+}
+
+/* Style the ColorPicker button to be more rectangular */
+.p-colorpicker-preview {
+  width: 20px !important;
+  height: 20px !important; 
+  border-radius: 4px !important;
+  border: 1px solid #ccc !important; 
+}
 </style>
 

@@ -1,7 +1,7 @@
 <template>
   <div>
     <YarnManager :mainColor="mainColor" :color1="color1" @update-colors="updateColors" />
- 
+ <br/><br/>
     <P5Grid :mainColor="mainColor" :color1="color1" />
   </div>
 </template>

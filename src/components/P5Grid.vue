@@ -122,7 +122,7 @@ const sketch = (p) => {
       });
     };
 
-    p.mousePressed = () => {
+      p.mousePressed = () => {
     // Check if the mouse is inside the canvas
     if (p.mouseX >= 0 && p.mouseX <= p.width && p.mouseY >= 0 && p.mouseY <= p.height) {
       // Find the index of the clicked rectangle in the rects array
@@ -146,16 +146,15 @@ const sketch = (p) => {
         console.log("Clicked outside the rectangles");
       }
     }
-    return false;
-  };
+  }; 
 };
 
 onMounted(() => {
   p5Instance = new p5(sketch, document.getElementById("p5-container"));
 
-  document.getElementById("p5-container").addEventListener("contextmenu", (e) => {
-    e.preventDefault();
-  });
+    //document.getElementById("p5-container").addEventListener("contextmenu", (e) => {
+  //  e.preventDefault();
+  //});
 });
 
 // if the chosen colors change, update canvas
