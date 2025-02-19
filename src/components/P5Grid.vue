@@ -12,6 +12,7 @@ const props = defineProps({
 
 // TODO: Check the rest of the grid works!
 // TODO: Add pre-made grid options
+// TODO: Add clear canvas button
 
 const normalizedMainColor = computed(() => props.mainColor.startsWith("#") ? props.mainColor : `#${props.mainColor}`);
 const normalizedColor1 = computed(() => props.color1.startsWith("#") ? props.color1 : `#${props.color1}`);

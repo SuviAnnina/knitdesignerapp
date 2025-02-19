@@ -22,11 +22,11 @@ watch([mainColor, color1], () => {
     <div>
         <p>Pick colors!</p>
         Background: <ColorPicker v-model="mainColor" @input="emitColorChange"/>
-        <input v-model="mainColor" placeholder="#123456" />
+        <input v-model="mainColor" v-tooltip="'You can enter hex code with or without #'" placeholder="123456" />
         <br />
        
         Color 1:  <ColorPicker v-model="color1" @input="emitColorChange"/>
-        <input v-model="color1" placeholder="#123456"/>
+        <input v-model="color1" v-tooltip="'You can enter hex code with or without #'" placeholder="123456"/>
 
     </div>
 </template>
@@ -38,7 +38,7 @@ input {
   border-bottom: 1px solid #000000;
   outline: none;
   padding: 2px;
-  margin-left: 6px;
+  
 }
 
 /* Style the ColorPicker button to be more rectangular */
@@ -47,6 +47,7 @@ input {
   height: 20px !important; 
   border-radius: 4px !important;
   border: 1px solid #ccc !important; 
+  margin-right: 6px;
 }
 </style>
 
