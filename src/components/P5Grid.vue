@@ -1,32 +1,20 @@
 <script setup>
-import { defineProps, ref, reactive, nextTick, watch, computed, onMounted, onBeforeUnmount } from "vue";
+import { ref, watch, nextTick, onMounted, onBeforeUnmount } from "vue";
 import p5 from "p5";
+import { colorPalette } from "@/colorPalette";
 
 let p5Instance;
 let rects = ref([]);
 
-const props = defineProps({
-  mainColor: String,
-  color1: String
-});
-
 // TODO: Check the rest of the grid works!
 // TODO: Add pre-made grid options
 // TODO: Add clear canvas button
-
-const normalizedMainColor = computed(() => props.mainColor.startsWith("#") ? props.mainColor : `#${props.mainColor}`);
-const normalizedColor1 = computed(() => props.color1.startsWith("#") ? props.color1 : `#${props.color1}`);
 
 function updateCanvas(){
   if (p5Instance){
     p5Instance.redraw();
   }
 }
-
-const patternColors = reactive({
-  "mainColor": normalizedMainColor,
-  "color1": normalizedColor1,
-});
 
 const sketch = (p) => {
   p.setup = () => {
@@ -114,11 +102,12 @@ const sketch = (p) => {
       //p.background("#EDF9EB"); // canvas background color
       rects.value.forEach(({ x, y, w, h, colorKey }) => {
         //console.log(rects.value[0].colorKey);
-        p.fill(patternColors[colorKey]);
+        p.fill(colorPalette[colorKey]);
+        //console.log(colorPalette.mainColor);
         p.rect(x, y, w, h);
 
         // rectangles bordercolor either black or white depending on mainColor
-        let rectBorderColor = p.color(patternColors["mainColor"]);
+        let rectBorderColor = p.color(colorPalette["mainColor"]);
         p.stroke(p.brightness(rectBorderColor) < 50 ? 255 : 0);
       });
     };
@@ -142,7 +131,7 @@ const sketch = (p) => {
           ? "color1" 
           : "mainColor";
 
-        await nextTick();
+        await nextTick(); // might be unnecessary
         // re-render grid with correct colors
         updateCanvas();
       } else {
@@ -152,22 +141,13 @@ const sketch = (p) => {
   }; 
 };
 
-onMounted(() => {
-  p5Instance = new p5(sketch, document.getElementById("p5-container"));
-
-    //document.getElementById("p5-container").addEventListener("contextmenu", (e) => {
-  //  e.preventDefault();
-  //});
+watch(colorPalette, () => {
+    updateCanvas()
 });
 
-// if the chosen colors change, update canvas
-watch(
-  () => [patternColors],
-  () => {
-    updateCanvas();
-  },
-  { deep: true }
-);
+onMounted(() => {
+  p5Instance = new p5(sketch, document.getElementById("p5-container"));
+});
 
 onBeforeUnmount(() => {
   p5Instance.remove();

@@ -1,25 +1,24 @@
-<template>
-  <div>
-    <YarnManager :mainColor="mainColor" :color1="color1" @update-colors="updateColors" />
- <br/><br/>
-    <P5Grid :mainColor="mainColor" :color1="color1" />
-  </div>
-</template>
-
 <script setup>
-import { ref } from "vue";
 import YarnManager from './components/YarnManager.vue';
 import P5Grid from './components/P5Grid.vue';
 
-const mainColor = ref('#ffffff');
-const color1 = ref('#ff0000');
+/* colorPalette.consoleLogColor();
+colorPalette.updateColor("mainColor1", "red");
+colorPalette.consoleLogColor();
+colorPalette.setColorEmpty("mainColor1");
+colorPalette.consoleLogColor();  */
 
-const updateColors = (newColors) => {
- // console.log('updateColors function received: ', newColors);
-  mainColor.value = newColors.mainColor;
-  color1.value = newColors.color1;
-};
 </script>
+
+<template>
+  <div>
+    <YarnManager />
+    <br/>
+    <br/>
+    <P5Grid />
+  </div>
+</template>
+
 
 <style>
 #app {

@@ -1,19 +1,12 @@
 <script setup>
-import ColorPicker from 'primevue/colorpicker';
-import { ref, defineEmits, watch } from "vue";
+import ColorPickerInput from './ColorPickerInput.vue';
+//import { colorPalette } from '@/colorPalette';
 
-const mainColor = ref('#ffffff');
-const color1 = ref('#ff0000');
+/* const createColorId = () => {
 
-const emit = defineEmits(["update-colors"]);
-const emitColorChange = () => {
-   // console.log("YarnManager.vue is attempting to emit colors", mainColor.value, color1.value);
-    emit('update-colors', { mainColor: mainColor.value, color1: color1.value });
-};
+} */
 
-watch([mainColor, color1], () => {
-    emitColorChange();
-});
+
 
 // TODO: add option for user to add colors
 
@@ -21,13 +14,9 @@ watch([mainColor, color1], () => {
 <template>
     <div>
         <p>Pick colors!</p>
-        Background: <ColorPicker v-model="mainColor" @input="emitColorChange"/>
-        <input v-model="mainColor" v-tooltip="'You can enter hex code with or without #'" placeholder="123456" />
-        <br />
-       
-        Color 1:  <ColorPicker v-model="color1" @input="emitColorChange"/>
-        <input v-model="color1" v-tooltip="'You can enter hex code with or without #'" placeholder="123456"/>
-
+        <ColorPickerInput title="Background" colorKey="mainColor"/>
+        <br/>
+        <ColorPickerInput title="Color 1" colorKey="color1"/>
     </div>
 </template>
 
@@ -41,7 +30,6 @@ input {
   
 }
 
-/* Style the ColorPicker button to be more rectangular */
 .p-colorpicker-preview {
   width: 20px !important;
   height: 20px !important; 
