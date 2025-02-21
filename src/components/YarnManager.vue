@@ -14,7 +14,7 @@ const handleAddColorPicker = () => {
         // Reuse the empty slot
         updateColor(emptySlotKey, 'ffffff');
     } else {
-        // Check if all 8 color slots are filled
+        // Check which color slot is empty, if any
         const filledColors = Object.values(colorPalette).filter(value => value !== '').length;
 
         if (filledColors < maxColors) {
@@ -29,7 +29,6 @@ const handleAddColorPicker = () => {
         console.log(`${color}: ${colorPalette[color]}`);
     }
 };
-
 
 </script>
 <template>
