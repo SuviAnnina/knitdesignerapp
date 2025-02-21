@@ -1,8 +1,7 @@
 <script setup>
 import ColorPicker from 'primevue/colorpicker';
 import { ref, watch, defineProps } from "vue";
-import { colorPalette } from '@/colorPalette';
-import { updateColor } from '@/colorPalette';
+import { colorPalette, updateColor } from '@/colorPalette';
 
 // TODO: input checker
 
@@ -11,7 +10,15 @@ import { updateColor } from '@/colorPalette';
     colorKey: String
 });
 
-const color = ref(colorPalette[props.colorKey]); // refin sisälle väri mikä renderöidään alkuun
+const color = ref(colorPalette[props.colorKey]); // this needs to be fixed
+// const color = ref(getColorValue(props.colorKey));
+
+// function getColorValue(colorKey) {
+//     const colorObject = colorPalette.find(item => 
+//         Object.prototype.hasOwnProperty.call(item, colorKey)
+//     );
+//     return colorObject[colorKey];
+// }
 
 watch(color, () => {
     //console.log('colorpalette original mainColor, should be #ba9cba: ',colorPalette.mainColor);
@@ -27,9 +34,11 @@ watch(color, () => {
 </script>
 
 <template>
+    <div>
     {{ title }} 
         <ColorPicker v-model="color" />
         <input v-model="color" v-tooltip="'Enter hex code without #'" placeholder="123456"/>
+    </div>
 </template>
 
 <style>
