@@ -5,32 +5,28 @@ import { ref } from 'vue';
 
 const colorNumber = ref(2);
 
-const handleAddColor = () => {
-    console.log("yay");
+const handleAddColorPicker = () => {
     updateColor(`color${colorNumber.value}`, "ffffff");
     colorNumber.value++;
+ 
+    for (const color in colorPalette){
+        console.log(`${color}: ${colorPalette[color]}`);
+    }
 }
 
 </script>
 <template>
     <div>
         <p>Pick colors!</p>
-        <!-- <ColorPickerInput title="Background" colorKey="mainColor"/>
-        <br/>
-        <ColorPickerInput title="Color 1" colorKey="color1"/>
-        <br/> -->
-        <button @click="handleAddColor">+</button>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <p>Testing array looping with vue loop..</p>
-         <div v-for="(value, key, index) in colorPalette" :key="index">
+         <div v-for="(value, key, index) in colorPalette" :key="index" v-show="value">
             <ColorPickerInput 
-            v-show="value" 
             :title="index === 0 ? 'Main color' : `Color ${index}`" 
-            :colorKey="key" />
+            :colorKey="key" 
+            :index="index"
+            />
         </div>
+        <br/>
+        <button @click="handleAddColorPicker">+</button>
     </div>
 </template>
 

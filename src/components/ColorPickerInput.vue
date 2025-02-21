@@ -1,24 +1,24 @@
 <script setup>
 import ColorPicker from 'primevue/colorpicker';
 import { ref, watch, defineProps } from "vue";
-import { colorPalette, updateColor } from '@/colorPalette';
+import { colorPalette, updateColor, setColorEmpty } from '@/colorPalette';
 
 // TODO: input checker
 
  const props = defineProps({
     title: String,
-    colorKey: String
+    colorKey: String,
+    index: Number
 });
 
-const color = ref(colorPalette[props.colorKey]); // this needs to be fixed
-// const color = ref(getColorValue(props.colorKey));
+const color = ref(colorPalette[props.colorKey]);
 
-// function getColorValue(colorKey) {
-//     const colorObject = colorPalette.find(item => 
-//         Object.prototype.hasOwnProperty.call(item, colorKey)
-//     );
-//     return colorObject[colorKey];
-// }
+const handleDeleteColorPicker = (colorKey) => {
+    console.log("Attempting to delete a colorpicker");
+    console.log('received colorkey: ',colorKey);
+    setColorEmpty(colorKey);
+    console.log('should be empty: ',colorPalette[colorKey]);
+}
 
 watch(color, () => {
     //console.log('colorpalette original mainColor, should be #ba9cba: ',colorPalette.mainColor);
@@ -38,6 +38,7 @@ watch(color, () => {
     {{ title }} 
         <ColorPicker v-model="color" />
         <input v-model="color" v-tooltip="'Enter hex code without #'" placeholder="123456"/>
+        <button @click="handleDeleteColorPicker(colorKey)" >Delete</button>
     </div>
 </template>
 

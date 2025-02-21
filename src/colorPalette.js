@@ -49,32 +49,12 @@ export const colorPalette = reactive({
     color7: ''
 });
 
-// an array of objects holding maincolor: #code and boolean show: true / false?
-
 export function updateColor(colorKey, colorCode) {
     if (colorPalette[colorKey] !== undefined) {
         colorPalette[colorKey] = `#${colorCode}`;
     }
 }
-/* export function updateColor(colorKey, colorCode) {
-    for (let colorObject of colorPalette) {
-        // Use Object.prototype.hasOwnProperty to avoid ESLint warning
-        if (Object.prototype.hasOwnProperty.call(colorObject, colorKey)) {
-            colorObject[colorKey] = `#${colorCode}`;
-            break;
-        }
-    }
-} */
-export function setColorEmpty(colorKey) {
-    colorPalette[colorKey] = 'leikisti tyhjä';
-}
 
-/* export function setColorEmpty(colorKey) {
-    for (let colorObject of colorPalette) {
-        // Use Object.prototype.hasOwnProperty to avoid ESLint warning
-        if (Object.prototype.hasOwnProperty.call(colorObject, colorKey)) {
-            colorObject[colorKey] = 'leikisti tyhjä';  // Modify as needed
-            break;
-        }
-    }
-} */
+export function setColorEmpty(colorKey) {
+    colorPalette[colorKey] = '';
+}
