@@ -1,18 +1,35 @@
 <script setup>
 import ColorPickerInput from './ColorPickerInput.vue';
 import { colorPalette, updateColor } from '@/colorPalette';
-import { ref } from 'vue';
 
-const colorNumber = ref(2);
+const maxColors = 8;
 
 const handleAddColorPicker = () => {
-    updateColor(`color${colorNumber.value}`, "ffffff");
-    colorNumber.value++;
- 
+    // Find the first empty color slot
+    const emptySlotKey = Object.keys(colorPalette).find(
+        key => colorPalette[key] === ''
+    );
+
+    if (emptySlotKey) {
+        // Reuse the empty slot
+        updateColor(emptySlotKey, 'ffffff');
+    } else {
+        // Check if all 8 color slots are filled
+        const filledColors = Object.values(colorPalette).filter(value => value !== '').length;
+
+        if (filledColors < maxColors) {
+            const newColorKey = `color${filledColors}`; 
+            // Adds next available slot
+            updateColor(newColorKey, 'ffffff');
+        } else {
+            alert("You can't add more than 8 colors!");
+        }
+    }
     for (const color in colorPalette){
         console.log(`${color}: ${colorPalette[color]}`);
     }
-}
+};
+
 
 </script>
 <template>

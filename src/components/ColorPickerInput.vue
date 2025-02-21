@@ -14,10 +14,10 @@ import { colorPalette, updateColor, setColorEmpty } from '@/colorPalette';
 const color = ref(colorPalette[props.colorKey]);
 
 const handleDeleteColorPicker = (colorKey) => {
-    console.log("Attempting to delete a colorpicker");
-    console.log('received colorkey: ',colorKey);
+    // console.log("Attempting to delete a colorpicker");
+    // console.log('received colorkey: ',colorKey);
     setColorEmpty(colorKey);
-    console.log('should be empty: ',colorPalette[colorKey]);
+    //console.log('should be empty: ',colorPalette[colorKey]);
 }
 
 watch(color, () => {
@@ -35,12 +35,18 @@ watch(color, () => {
 
 <template>
     <div>
-    {{ title }} 
+    title: {{ title }}, index: {{ index }}, colorkey: {{ colorKey }}
         <ColorPicker v-model="color" />
         <input v-model="color" v-tooltip="'Enter hex code without #'" placeholder="123456"/>
-        <button @click="handleDeleteColorPicker(colorKey)" >Delete</button>
+        <button @click="handleDeleteColorPicker(colorKey)" >X</button>
     </div>
 </template>
 
 <style>
+.p-tooltip {
+  background-color: #ffffff; /* Dark background */
+  border-radius: 8px; /* Rounded corners */
+  padding: 8px 12px; /* Padding inside tooltip */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
 </style>

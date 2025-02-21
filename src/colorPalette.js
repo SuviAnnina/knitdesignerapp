@@ -1,43 +1,5 @@
 import { reactive } from 'vue'
 
-/* export const colorPalette = reactive(
-    [
-        {
-            mainColor: "#ba9cba",
-            show: true
-        },
-        {
-            color1: '#ffffff',
-            show: true
-        },
-        {
-            color2: '',
-            show: false
-        },
-        {
-            color3: '',
-            show: false
-        },
-        {
-            color4: '',
-            show: false
-        },
-        {
-            color5: '',
-            show: false
-        },
-        {
-            color6: '',
-            show: false
-        },
-        {
-            color7: '',
-            show: false
-        },
-
-    ]
-);
- */
 export const colorPalette = reactive({
     mainColor: "#ba9cba",
     color1: '#ffffff',

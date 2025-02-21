@@ -1,13 +1,6 @@
 <script setup>
 import YarnManager from './components/YarnManager.vue';
 import P5Grid from './components/P5Grid.vue';
-
-/* colorPalette.consoleLogColor();
-colorPalette.updateColor("mainColor1", "red");
-colorPalette.consoleLogColor();
-colorPalette.setColorEmpty("mainColor1");
-colorPalette.consoleLogColor();  */
-
 </script>
 
 <template>
@@ -18,7 +11,6 @@ colorPalette.consoleLogColor();  */
     <P5Grid />
   </div>
 </template>
-
 
 <style>
 #app {
