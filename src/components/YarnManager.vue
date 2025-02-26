@@ -1,29 +1,9 @@
 <script setup>
 import ColorPickerInput from './ColorPickerInput.vue';
-import { colorPalette, updateColor,  colorPalette2} from '@/colorPalette';
+import { colorPalette, updateColor} from '@/colorPalette';
 
 const maxColors = 8;
-console.log(colorPalette2[0].color);
-
-// const testColorPicker2 = ()=> {
-    // console.log("string ", colorPalette2[0].color);
-    // console.log("boolean", colorPalette2[0].show);
-    // console.log("värin vaihto!", changeColorTest());
-    // console.log("string should be ffffff", colorPalette2[0].color);
-// loopArray();    
-// }
-
-// const loopArray = () => {
-//     console.log("array len:", colorPalette2.length)
-//     console.log("Start loop");
-//     for (let i = 0; i < colorPalette2.length; i++){
-//         console.log(i, colorPalette2[i].color);
-//     }
-// }
-
-// const changeColorTest = () => {
-//     colorPalette2[0].mainColor = "#ffffff";
-// }
+console.log(colorPalette[0].color);
 
 const handleAddColorPicker = () => {
     // Find the first empty color slot
@@ -54,35 +34,14 @@ const handleAddColorPicker = () => {
 </script>
 <template>
     <div>
-        <p>Pick colors!</p>
-         <!-- <div v-for="(value, key, index) in colorPalette" :key="index" v-show="value">
-            <ColorPickerInput 
-            :title="index === 0 ? 'Main color' : `Color ${index}`" 
-            :colorKey="key" 
-            :index="index"
-            />
-        </div> -->
-        <br/>
-        <button @click="handleAddColorPicker">+</button>
-        <button @click="testColorPicker2">Testi</button>
-    </div>
-
-
-
-    <div>
-        <p>colorPalette2 trial</p>
-         <!-- <div v-for="(value, key, index) in colorPalette" :key="index" v-show="value">
-            <ColorPickerInput 
-            :title="index === 0 ? 'Main color' : `Color ${index}`" 
-            :colorKey="key" 
-            :index="index"
-            />
-        </div> -->
-        <div v-for="(colorObject, index ) in colorPalette2" :key="index" v-show="colorPalette2[index].show">
+        <p>colorPalette trial</p>
+        <div v-for="(colorObject, index ) in colorPalette" :key="index" v-show="colorPalette[index].show">
             <ColorPickerInput 
             :index="index"
             />
         </div>
+        <button @click="handleAddColorPicker">+</button>
+        <button @click="testColorPicker2">Testi</button>
     </div>
 
 </template>

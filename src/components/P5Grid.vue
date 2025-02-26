@@ -1,216 +1,59 @@
 <script setup>
-import { ref, watch, nextTick, onMounted, onBeforeUnmount } from "vue";
+import { onMounted, onBeforeUnmount, watch } from "vue";
 import p5 from "p5";
-import { colorPalette2 } from "@/colorPalette";
-// importtaa colorPalette,  bäkkii jos tarvii
-// import { computed } from "vue";
-
-
-// const colorValues = computed(() => colorPalette2.map(colorObj => colorObj.color));
-
-// watch(colorValues, () => {
-//   updateCanvas();
-// });
-
+import { colorPalette } from "@/colorPalette";
 
 let p5Instance;
-let rects = ref([]);
+const columns = 8;
+const rows = 45;
+const rowLengthsS = [3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8]
+// Size S grid
+  // 3 rows, 3 cols
+  // 4 rows, 4 columns
+  // Third grid: 5 rows, 5 columns
+  // Fourth grid: 9 rows, 6 columns
+  // Fifth grid: 7 rows, 7 columns
+  // Sixt grid: 17 rows, 8 columns 
 
-// TODO: Check the rest of the grid works!
-// TODO: Add pre-made grid options
-// TODO: Add clear canvas button
-
-console.log("P5 valivaliohitus ", colorPalette2[0].color);
-
-function updateCanvas(){
-  if (p5Instance){
-    p5Instance.redraw();
-  }
-}
+const squareWidth = 20;
+let squares = Array.from({ length: rows }, () => Array(columns).fill(0));
 
 const sketch = (p) => {
   p.setup = () => {
       p.createCanvas(600, 1000);
       p.background("#EDF9EB"); // canvas background color
       p.noLoop();
-      
-      rects.value = [];
-
-      let startX = 0;
-      let startY = 0;
-      let rectWidth = 20;
-      let rectHeight = 20;
-
-      // Size S grid
-      // 3 rows, 3 cols
-      // for (let row = 0; row < 3; row++) {
-      //   for (let col = 0; col < 3; col++) {
-      //     let x = startX + col * rectWidth;
-      //     let y = startY + row * rectHeight;
-      //     rects.value.push({ x, y, w: rectWidth, h: rectHeight, colorKey: "mainColor" });
-      //   }
-      // } 
-      for (let row = 0; row < 3; row++) {
-        for (let col = 0; col < 3; col++) {
-          let x = startX + col * rectWidth;
-          let y = startY + row * rectHeight;
-          rects.value.push({ x, y, w: rectWidth, h: rectHeight, color: colorPalette2[0].color });
-        console.log('ruudukon luonti, pohjaväri: ', colorPalette2[0].color);
-        }
-      } 
-      // 4 x 4
-      // for (let row = 0; row < 4; row++){
-      //   for (let col = 0; col < 4; col++) {
-      //     let x = startX + col * rectWidth;
-      //     let y = startY + 3 * rectHeight + row * rectHeight;
-      //     rects.value.push({ x, y, w: rectWidth, h: rectHeight, colorKey: "mainColor" });
-      //   }
-      // }
-    /* 
-    // Second grid: 4 rows, 4 columns
-    let secondGridStartY = startY + 3 * rectHeight;
-    for (let row = 0; row < 4; row++) {
-      for (let col = 0; col < 4; col++) {
-            let x = startX + col * rectWidth;
-            let y = secondGridStartY + row * rectHeight;
-            p.rect(x, y, rectWidth, rectHeight);
-          }
-        }
-    
-        // Third grid: 5 rows, 5 columns
-        let thirdGridStartY = startY + 7 * rectHeight;
-        for (let row = 0; row < 5; row++) {
-          for (let col = 0; col < 5; col++) {
-            let x = startX + col * rectWidth;
-            let y = thirdGridStartY + row * rectHeight;
-            p.rect(x, y, rectWidth, rectHeight);
-          }
-        }
-    
-        // Fourth grid: 9 rows, 6 columns
-        let fourthGridStartY = startY + 12 * rectHeight;
-        for (let row = 0; row < 9; row++) {
-          for (let col = 0; col < 6; col++) {
-            let x = startX + col * rectWidth;
-            let y = fourthGridStartY + row * rectHeight;
-            p.rect(x, y, rectWidth, rectHeight);
-          }
-        }
-    
-        // Fifth grid: 7 rows, 7 columns
-        let fifthGridStartY = startY + 21 * rectHeight;
-        for (let row = 0; row < 7; row++) {
-          for (let col = 0; col < 7; col++) {
-            let x = startX + col * rectWidth;
-            let y = fifthGridStartY + row * rectHeight;
-            p.rect(x, y, rectWidth, rectHeight);
-          }
-        }
-    
-        // Sixt grid: 17 rows, 8 columns
-        let sixthGridStartY = startY + 28 * rectHeight;
-        for (let row = 0; row < 17; row++) {
-          for (let col = 0; col < 8; col++) {
-            let x = startX + col * rectWidth;
-            let y = sixthGridStartY + row * rectHeight;
-            p.rect(x, y, rectWidth, rectHeight);
-          }
-        } */
     };
 
-    // p.draw = () => {
-    //   //p.background("#EDF9EB"); // canvas background color
-    //   rects.value.forEach(({ x, y, w, h, colorKey }) => {
-    //     //console.log(rects.value[0].colorKey);
-    //     p.fill(colorPalette[colorKey]);
-    //     //console.log(colorPalette.mainColor);
-    //     p.rect(x, y, w, h);
-
-    //     // rectangles bordercolor either black or white depending on mainColor
-    //     let rectBorderColor = p.color(colorPalette["mainColor"]);
-    //     p.stroke(p.brightness(rectBorderColor) < 50 ? 255 : 0);
-    //   });
-    // };
     p.draw = () => {
-      //p.background("#EDF9EB"); // canvas background color
-      rects.value.forEach(({ x, y, w, h, color }) => {
-        //console.log(rects.value[0].colorKey);
-        // p.fill(colorPalette2[colorKey]);
-        p.fill(color);
-        console.log('p5 p.draw filliväri: ', color);
-        
-        //console.log(colorPalette.mainColor);
-        p.rect(x, y, w, h);
+      // rectangles bordercolor either black or white depending on mainColor
+      let rectBorderColor = p.color(colorPalette[0].color);
+      p.stroke(p.brightness(rectBorderColor) < 50 ? 255 : 0);
 
-        // rectangles bordercolor either black or white depending on mainColor
-        // let rectBorderColor = p.color();
-        // p.stroke(p.brightness(rectBorderColor) < 50 ? 255 : 0);
-      });
+      for (let y = 0; y < rows; y++){
+        for (let x = 0; x < rowLengthsS[y]; x++){
+          p.fill(colorPalette[squares[y][x]].color);
+          console.log("p5 draw", colorPalette[squares[y][x]].color);
+          p.square(x * squareWidth, y * squareWidth, squareWidth);
+        }
+      }        
     };
 
-  //     p.mousePressed = async () => {
-  //   // Check if the mouse is inside the canvas
-  //   if (p.mouseX >= 0 && p.mouseX <= p.width && p.mouseY >= 0 && p.mouseY <= p.height) {
-  //     // Find the index of the clicked rectangle in the rects array
-  //     const clickedRectIndex = rects.value.findIndex(({ x, y, w, h }) =>
-  //       p.mouseX >= x && p.mouseX <= x + w && p.mouseY >= y && p.mouseY <= y + h
-  //     );
-
-  //     if (clickedRectIndex !== -1) {
-  //       // console.log("Clicked on a rectangle at:", rects.value[clickedRectIndex].x, rects.value[clickedRectIndex].y);
-  //       // console.log("received accent color is ", normalizedColor1.value);
-
-  //       // Toggle the colorKey of the clicked rectangle
-  //       const clickedRect = rects.value[clickedRectIndex];
-  //       clickedRect.colorKey = 
-  //         clickedRect.colorKey === "mainColor" 
-  //         ? "color1" 
-  //         : "mainColor";
-
-  //       await nextTick(); // might be unnecessary
-  //       // re-render grid with correct colors
-  //       updateCanvas();
-  //     } else {
-  //       console.log("Clicked outside the rectangles");
-  //     }
-  //   }
-  // }; 
-      p.mousePressed = async () => {
-    // Check if the mouse is inside the canvas
-    if (p.mouseX >= 0 && p.mouseX <= p.width && p.mouseY >= 0 && p.mouseY <= p.height) {
-      // Find the index of the clicked rectangle in the rects array
-      const clickedRectIndex = rects.value.findIndex(({ x, y, w, h }) =>
-        p.mouseX >= x && p.mouseX <= x + w && p.mouseY >= y && p.mouseY <= y + h
-      );
-
-      if (clickedRectIndex !== -1) {
-        // console.log("Clicked on a rectangle at:", rects.value[clickedRectIndex].x, rects.value[clickedRectIndex].y);
-        // console.log("received accent color is ", normalizedColor1.value);
-
-
-        // Toggle the colorKey of the clicked rectangle
-        const clickedRect = rects.value[clickedRectIndex];
-        clickedRect.color = clickedRect.color === colorPalette2[0].color 
-          ? colorPalette2[1].color 
-          : colorPalette2[0].color;
-
-        await nextTick(); // might be unnecessary
-        // re-render grid with correct colors
-        updateCanvas();
-      } else {
-        console.log("Clicked outside the rectangles");
+      p.mouseClicked = (event) => {
+        if (p.mouseX < 0 || p.mouseX > p.width || p.mouseY < 0 || p.mouseY > p.height ){
+          return
+        }
+        let x = p.floor(event.offsetX / squareWidth);
+        let y = p.floor(event.offsetY / squareWidth);
+        
+        squares[y][x] = 1;
+        p.redraw();
       }
     }
-  }; 
-};
 
-watch(colorPalette2, () => {
-    // updateCanvas()
-    p5Instance.redraw();
-    console.log("uudelleenpiirto")
-},
-{deep: true}
-);
+watch(colorPalette, () => {
+  p5Instance.redraw();
+})
 
 onMounted(() => {
   p5Instance = new p5(sketch, document.getElementById("p5-container"));
