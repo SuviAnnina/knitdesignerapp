@@ -1,7 +1,17 @@
 <script setup>
 import { ref, watch, nextTick, onMounted, onBeforeUnmount } from "vue";
 import p5 from "p5";
-import { colorPalette } from "@/colorPalette";
+import { colorPalette2 } from "@/colorPalette";
+// importtaa colorPalette,  bäkkii jos tarvii
+// import { computed } from "vue";
+
+
+// const colorValues = computed(() => colorPalette2.map(colorObj => colorObj.color));
+
+// watch(colorValues, () => {
+//   updateCanvas();
+// });
+
 
 let p5Instance;
 let rects = ref([]);
@@ -9,6 +19,8 @@ let rects = ref([]);
 // TODO: Check the rest of the grid works!
 // TODO: Add pre-made grid options
 // TODO: Add clear canvas button
+
+console.log("P5 valivaliohitus ", colorPalette2[0].color);
 
 function updateCanvas(){
   if (p5Instance){
@@ -31,21 +43,29 @@ const sketch = (p) => {
 
       // Size S grid
       // 3 rows, 3 cols
+      // for (let row = 0; row < 3; row++) {
+      //   for (let col = 0; col < 3; col++) {
+      //     let x = startX + col * rectWidth;
+      //     let y = startY + row * rectHeight;
+      //     rects.value.push({ x, y, w: rectWidth, h: rectHeight, colorKey: "mainColor" });
+      //   }
+      // } 
       for (let row = 0; row < 3; row++) {
         for (let col = 0; col < 3; col++) {
           let x = startX + col * rectWidth;
           let y = startY + row * rectHeight;
-          rects.value.push({ x, y, w: rectWidth, h: rectHeight, colorKey: "mainColor" });
+          rects.value.push({ x, y, w: rectWidth, h: rectHeight, color: colorPalette2[0].color });
+        console.log('ruudukon luonti, pohjaväri: ', colorPalette2[0].color);
         }
       } 
       // 4 x 4
-      for (let row = 0; row < 4; row++){
-        for (let col = 0; col < 4; col++) {
-          let x = startX + col * rectWidth;
-          let y = startY + 3 * rectHeight + row * rectHeight;
-          rects.value.push({ x, y, w: rectWidth, h: rectHeight, colorKey: "mainColor" });
-        }
-      }
+      // for (let row = 0; row < 4; row++){
+      //   for (let col = 0; col < 4; col++) {
+      //     let x = startX + col * rectWidth;
+      //     let y = startY + 3 * rectHeight + row * rectHeight;
+      //     rects.value.push({ x, y, w: rectWidth, h: rectHeight, colorKey: "mainColor" });
+      //   }
+      // }
     /* 
     // Second grid: 4 rows, 4 columns
     let secondGridStartY = startY + 3 * rectHeight;
@@ -98,20 +118,63 @@ const sketch = (p) => {
         } */
     };
 
+    // p.draw = () => {
+    //   //p.background("#EDF9EB"); // canvas background color
+    //   rects.value.forEach(({ x, y, w, h, colorKey }) => {
+    //     //console.log(rects.value[0].colorKey);
+    //     p.fill(colorPalette[colorKey]);
+    //     //console.log(colorPalette.mainColor);
+    //     p.rect(x, y, w, h);
+
+    //     // rectangles bordercolor either black or white depending on mainColor
+    //     let rectBorderColor = p.color(colorPalette["mainColor"]);
+    //     p.stroke(p.brightness(rectBorderColor) < 50 ? 255 : 0);
+    //   });
+    // };
     p.draw = () => {
       //p.background("#EDF9EB"); // canvas background color
-      rects.value.forEach(({ x, y, w, h, colorKey }) => {
+      rects.value.forEach(({ x, y, w, h, color }) => {
         //console.log(rects.value[0].colorKey);
-        p.fill(colorPalette[colorKey]);
+        // p.fill(colorPalette2[colorKey]);
+        p.fill(color);
+        console.log('p5 p.draw filliväri: ', color);
+        
         //console.log(colorPalette.mainColor);
         p.rect(x, y, w, h);
 
         // rectangles bordercolor either black or white depending on mainColor
-        let rectBorderColor = p.color(colorPalette["mainColor"]);
-        p.stroke(p.brightness(rectBorderColor) < 50 ? 255 : 0);
+        // let rectBorderColor = p.color();
+        // p.stroke(p.brightness(rectBorderColor) < 50 ? 255 : 0);
       });
     };
 
+  //     p.mousePressed = async () => {
+  //   // Check if the mouse is inside the canvas
+  //   if (p.mouseX >= 0 && p.mouseX <= p.width && p.mouseY >= 0 && p.mouseY <= p.height) {
+  //     // Find the index of the clicked rectangle in the rects array
+  //     const clickedRectIndex = rects.value.findIndex(({ x, y, w, h }) =>
+  //       p.mouseX >= x && p.mouseX <= x + w && p.mouseY >= y && p.mouseY <= y + h
+  //     );
+
+  //     if (clickedRectIndex !== -1) {
+  //       // console.log("Clicked on a rectangle at:", rects.value[clickedRectIndex].x, rects.value[clickedRectIndex].y);
+  //       // console.log("received accent color is ", normalizedColor1.value);
+
+  //       // Toggle the colorKey of the clicked rectangle
+  //       const clickedRect = rects.value[clickedRectIndex];
+  //       clickedRect.colorKey = 
+  //         clickedRect.colorKey === "mainColor" 
+  //         ? "color1" 
+  //         : "mainColor";
+
+  //       await nextTick(); // might be unnecessary
+  //       // re-render grid with correct colors
+  //       updateCanvas();
+  //     } else {
+  //       console.log("Clicked outside the rectangles");
+  //     }
+  //   }
+  // }; 
       p.mousePressed = async () => {
     // Check if the mouse is inside the canvas
     if (p.mouseX >= 0 && p.mouseX <= p.width && p.mouseY >= 0 && p.mouseY <= p.height) {
@@ -124,12 +187,12 @@ const sketch = (p) => {
         // console.log("Clicked on a rectangle at:", rects.value[clickedRectIndex].x, rects.value[clickedRectIndex].y);
         // console.log("received accent color is ", normalizedColor1.value);
 
+
         // Toggle the colorKey of the clicked rectangle
         const clickedRect = rects.value[clickedRectIndex];
-        clickedRect.colorKey = 
-          clickedRect.colorKey === "mainColor" 
-          ? "color1" 
-          : "mainColor";
+        clickedRect.color = clickedRect.color === colorPalette2[0].color 
+          ? colorPalette2[1].color 
+          : colorPalette2[0].color;
 
         await nextTick(); // might be unnecessary
         // re-render grid with correct colors
@@ -141,9 +204,13 @@ const sketch = (p) => {
   }; 
 };
 
-watch(colorPalette, () => {
-    updateCanvas()
-});
+watch(colorPalette2, () => {
+    // updateCanvas()
+    p5Instance.redraw();
+    console.log("uudelleenpiirto")
+},
+{deep: true}
+);
 
 onMounted(() => {
   p5Instance = new p5(sketch, document.getElementById("p5-container"));
