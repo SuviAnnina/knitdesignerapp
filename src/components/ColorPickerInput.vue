@@ -1,6 +1,6 @@
 <script setup>
 import { ref, watch, defineProps } from "vue";
-import { updateColor, setColorEmpty, colorPalette, updateShow } from '@/colorPalette';
+import { updateColor, setColorEmpty, colorPalette, updateShow, selectedColorIndex, changeSelectedColor } from '@/colorPalette';
 
 // TODO: input checker
 
@@ -21,6 +21,13 @@ const handleDeleteColorPicker = (index) => {
     updateShow(index, false);
     console.log("poistetulta indeksipaikalta väritsekki, pitäs olla tyhjä: ", colorPalette[index].color);
 }
+
+const handleSelectedColor = (index) => {
+    console.log('default(1)/old selected color index : ', selectedColorIndex.value);
+    console.log('clicked index: ',index);
+    changeSelectedColor(index);
+    console.log('updated selected color index: ', selectedColorIndex.value);
+}
 </script>
 
 <template>
@@ -29,7 +36,7 @@ const handleDeleteColorPicker = (index) => {
         <input type="color" v-model="color"/>
 <!--         <input v-model.lazy="color" v-tooltip="'Enter hex code without #'" placeholder="123456"/>
  -->        <button @click="handleDeleteColorPicker(index)" >X</button>
-        <button>Select</button>
+        <button @click="handleSelectedColor(index)">Select</button>
     </div>
 </template>
 

@@ -2,9 +2,8 @@
 import ColorPickerInput from './ColorPickerInput.vue';
 import { colorPalette, updateColor, updateShow } from '@/colorPalette';
 
-
 const handleAddColorPicker = () => {
-    // Find the first empty color slot
+    // Find empty color slot
     const emptySlotIndex = Object.keys(colorPalette).find(
         index => colorPalette[index].color === ''
     );

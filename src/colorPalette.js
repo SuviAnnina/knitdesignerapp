@@ -1,4 +1,6 @@
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
+
+export const selectedColorIndex = ref(1);
 
 export const colorPalette = reactive([
     {
@@ -53,4 +55,8 @@ export function updateShow(index, boolean) {
 
 export function setColorEmpty(index) {
     colorPalette[index].color = '';
+}
+
+export function changeSelectedColor(index) {
+    selectedColorIndex.value = index;
 }

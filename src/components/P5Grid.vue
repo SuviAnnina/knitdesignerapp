@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, onBeforeUnmount, watch } from "vue";
 import p5 from "p5";
-import { colorPalette } from "@/colorPalette";
+import { colorPalette, selectedColorIndex } from "@/colorPalette";
 
 let p5Instance;
 const columns = 8;
@@ -16,7 +16,10 @@ const rowLengthsS = [3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6,
   // Sixt grid: 17 rows, 8 columns 
 
 const squareWidth = 20;
+
+// squares 2D taulukko, johon tallennettu indeksipaikka, josta väri haetaan; default fill kaikkiin 0-indeksi
 let squares = Array.from({ length: rows }, () => Array(columns).fill(0));
+console.log('squares array 0 indeksipaikan 0 element: ', squares[0][0]);
 
 const sketch = (p) => {
   p.setup = () => {
@@ -46,7 +49,13 @@ const sketch = (p) => {
         let x = p.floor(event.offsetX / squareWidth);
         let y = p.floor(event.offsetY / squareWidth);
         
-        squares[y][x] = 1;
+        if (squares[y][x] == 0){
+          squares[y][x] = selectedColorIndex.value;
+        } else {
+          squares[y][x] = 0;
+        }
+
+        // squares[y][x] = 1;
         p.redraw();
       }
     }
