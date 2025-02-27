@@ -47,7 +47,10 @@ export function updateColor(index, colorCode) {
     colorPalette[index].color = colorCode;
 }
 
+export function updateShow(index, boolean) {
+    colorPalette[index].show = boolean;
+}
+
 export function setColorEmpty(index) {
     colorPalette[index].color = '';
-    colorPalette[index].show = false;
 }

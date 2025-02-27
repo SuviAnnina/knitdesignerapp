@@ -7,4 +7,5 @@ import Tooltip from 'primevue/tooltip';
 const app = createApp(App);
 app.use(PrimeVue);
 app.directive('tooltip', Tooltip);
+
 app.mount('#app');

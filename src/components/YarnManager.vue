@@ -1,33 +1,27 @@
 <script setup>
 import ColorPickerInput from './ColorPickerInput.vue';
-import { colorPalette, updateColor} from '@/colorPalette';
+import { colorPalette, updateColor, updateShow } from '@/colorPalette';
 
-const maxColors = 8;
-console.log(colorPalette[0].color);
 
 const handleAddColorPicker = () => {
     // Find the first empty color slot
-    const emptySlotKey = Object.keys(colorPalette).find(
-        key => colorPalette[key] === ''
+    const emptySlotIndex = Object.keys(colorPalette).find(
+        index => colorPalette[index].color === ''
     );
+    // console.log('empty slot key? ', emptySlotKey);
 
-    if (emptySlotKey) {
-        // Reuse the empty slot
-        updateColor(emptySlotKey, 'ffffff');
-    } else {
-        // Check which color slot is empty, if any
-        const filledColors = Object.values(colorPalette).filter(value => value !== '').length;
-
-        if (filledColors < maxColors) {
-            const newColorKey = `color${filledColors}`; 
-            // Adds next available slot
-            updateColor(newColorKey, 'ffffff');
-        } else {
-            alert("You can't add more than 8 colors!");
-        }
+    if (emptySlotIndex) {
+        // console.log('found empty, attempting to update to white')
+        updateColor(emptySlotIndex, '#ffffff');
+        // console.log('after uodate should be white ffff..: ', colorPalette[emptySlotIndex].color)
+        updateShow(emptySlotIndex, true);
+        console.log('empty slot index:',emptySlotIndex);
+    } 
+    else {
+        alert("You can't add more than 8 colors!");
     }
     for (const color in colorPalette){
-        console.log(`${color}: ${colorPalette[color]}`);
+        console.log(`${color}: ${colorPalette[color].color}`);
     }
 };
 
@@ -41,7 +35,7 @@ const handleAddColorPicker = () => {
             />
         </div>
         <button @click="handleAddColorPicker">+</button>
-        <button @click="testColorPicker2">Testi</button>
+        <button >Testi</button>
     </div>
 
 </template>
