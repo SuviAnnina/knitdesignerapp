@@ -52,9 +52,13 @@ const resizeGrid = () => {
   );
 }
 
-const clearGrid = () => {
-  resizeGrid();
-  p5Instance.redraw();
+const handleClearGrid = () => {
+  const isConfirmed = confirm("Are you sure you want to clear canvas?");
+
+  if (isConfirmed){
+    resizeGrid();
+    p5Instance.redraw();
+  }
 }
 
 const sketch = (p) => {
@@ -129,7 +133,7 @@ onBeforeUnmount(() => {
     </div>
   <div id="p5-container" class="p5-container"></div>
   <div>
-    <button @click="clearGrid" class="clearcanvas">Clear canvas</button>
+    <button @click="handleClearGrid" class="clearcanvas">Clear canvas</button>
   </div>
 </template>
 
