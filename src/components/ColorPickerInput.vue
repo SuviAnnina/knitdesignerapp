@@ -22,21 +22,24 @@ const handleDeleteColorPicker = (index) => {
     console.log("poistetulta indeksipaikalta väritsekki, pitäs olla tyhjä: ", colorPalette[index].color);
 }
 
-const handleSelectedColor = (index) => {
+ const handleSelectedColor = (index) => {
     console.log('default(1)/old selected color index : ', selectedColorIndex.value);
     console.log('clicked index: ',index);
     changeSelectedColor(index);
     console.log('updated selected color index: ', selectedColorIndex.value);
-}
+} 
 </script>
 
 <template>
-    <div>
+    <div 
+    class="clickable-div"
+    @click="handleSelectedColor(index)"
+    >
     index: {{ index }}
         <input type="color" v-model="color"/>
-<!--         <input v-model.lazy="color" v-tooltip="'Enter hex code without #'" placeholder="123456"/>
+<!--         <input v-model.lazy="color" placeholder="123456"/>
  -->        <button @click="handleDeleteColorPicker(index)" >X</button>
-        <button @click="handleSelectedColor(index)">Select</button>
+        <button @click="handleSelectedColor(index)">S</button>
     </div>
 </template>
 
@@ -45,5 +48,21 @@ const handleSelectedColor = (index) => {
   background-color: #ffffff; 
   border-radius: 4px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.clickable-div{
+    cursor:pointer;
+    display: flex;
+    /* align-items: center; */
+    justify-content: center;
+    gap: 8px;
+}
+
+.clickable-div:hover{
+    background-color: aliceblue;
+}
+
+.clickable-div:active{
+    background-color: aquamarine;
 }
 </style>

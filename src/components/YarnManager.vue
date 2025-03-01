@@ -28,15 +28,17 @@ const handleAddColorPicker = () => {
 <template>
     <div>
         <p>colorPalette trial</p>
-        <div v-for="(colorObject, index ) in colorPalette" :key="index" v-show="colorPalette[index].show">
+        <div v-for="(colorObject, index ) in colorPalette" 
+        :key="index" 
+        v-show="colorPalette[index].show"        
+        >
             <ColorPickerInput 
             :index="index"
             />
         </div>
         <button @click="handleAddColorPicker">+</button>
-        <button >Testi</button>
+       
     </div>
-
 </template>
 
 <style>
