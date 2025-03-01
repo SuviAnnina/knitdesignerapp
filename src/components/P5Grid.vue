@@ -122,5 +122,11 @@ onBeforeUnmount(() => {
         </select>
         <button @click="test">Testi</button>
     </div>
-  <div id="p5-container"></div>
+  <div id="p5-container" class="p5-container"></div>
 </template>
+
+<style>
+.p5-container {
+  margin-top: 20px;
+}
+</style>

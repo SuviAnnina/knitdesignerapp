@@ -1,6 +1,20 @@
 <script setup>
 import YarnManager from './components/YarnManager.vue';
 import P5Grid from './components/P5Grid.vue';
+import { onMounted, onUnmounted } from "vue";
+
+const handleBeforeUnload = (event) => {
+  event.preventDefault();
+  event.returnValue = "";
+};
+
+onMounted(() => {
+  window.addEventListener("beforeunload", handleBeforeUnload);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("beforeunload", handleBeforeUnload);
+});
 </script>
 
 <template>
