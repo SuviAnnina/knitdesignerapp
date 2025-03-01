@@ -4,7 +4,7 @@ import p5 from "p5";
 import { colorPalette, selectedColorIndex } from "@/colorPalette";
 import {ref} from 'vue';
 
-const chosenSize = ref("XS");
+const chosenSize = ref("S");
 
 let p5Instance;
 const columns = 8;
@@ -44,11 +44,17 @@ const squareWidth = 20;
 // squares 2D taulukko, johon tallennettu indeksipaikka, josta väri haetaan; default fill kaikkiin 0-indeksi
 // let squares = Array.from({ length: rows  }, () => Array(columns).fill(0));
 
-const selectedTemplate = templates.find(template => template.size === chosenSize.value);
-const squares = Array.from(
+let selectedTemplate;
+let squares;
+
+const resizeGrid = () => {
+  selectedTemplate = templates.find(template => template.size === chosenSize.value);
+  squares = Array.from(
     { length: selectedTemplate.rows },
     () => Array(columns).fill(0)
   );
+  console.log("ResizeGrid function called!")
+}
 
 const sketch = (p) => {
   p.setup = () => {
@@ -56,9 +62,11 @@ const sketch = (p) => {
       p.background("#EDF9EB"); // canvas background color
       p.noLoop();
     };
-
+    
     p.draw = () => {
+      p.background("#EDF9EB"); // canvas background color
       // rectangles bordercolor either black or white depending on mainColor
+      console.log('p.draw: ', selectedTemplate);
       let rectBorderColor = p.color(colorPalette[0].color);
       p.stroke(p.brightness(rectBorderColor) < 50 ? 255 : 0);
 
@@ -102,11 +110,14 @@ watch(colorPalette, () => {
 
 
 watch(chosenSize, () => {
+  console.log("chosenSize change detected!")
+  resizeGrid();
   p5Instance.redraw();
 })
 
 onMounted(() => {
   p5Instance = new p5(sketch, document.getElementById("p5-container"));
+  resizeGrid();
 });
 
 onBeforeUnmount(() => {
