@@ -52,6 +52,11 @@ const resizeGrid = () => {
   );
 }
 
+const clearGrid = () => {
+  resizeGrid();
+  p5Instance.redraw();
+}
+
 const sketch = (p) => {
   p.setup = () => {
       p.createCanvas(180, 1010);
@@ -123,10 +128,28 @@ onBeforeUnmount(() => {
         <button @click="test">Testi</button>
     </div>
   <div id="p5-container" class="p5-container"></div>
+  <div>
+    <button @click="clearGrid" class="clearcanvas">Clear canvas</button>
+  </div>
 </template>
 
 <style>
 .p5-container {
   margin-top: 20px;
+}
+
+.clearcanvas {
+  width: 130px;
+  border: 1px solid #000;
+  border-radius: 15px;
+  margin-top: 20px;
+}
+
+.clearcanvas:hover {
+  background-color: rgb(226, 232, 228);
+}
+
+.clearcanvas:active{
+    background-color: rgb(136, 159, 152);
 }
 </style>
