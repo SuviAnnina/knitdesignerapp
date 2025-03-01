@@ -50,7 +50,6 @@ const resizeGrid = () => {
     { length: selectedTemplate.rows },
     () => Array(columns).fill(0)
   );
-  // console.log("ResizeGrid function called!")
 }
 
 const sketch = (p) => {
@@ -62,7 +61,6 @@ const sketch = (p) => {
     
     p.draw = () => {
       p.background("#EDF9EB"); // canvas background color
-      // console.log('p.draw: ', selectedTemplate);
       // rectangles bordercolor either black or white depending on mainColor
       let rectBorderColor = p.color(colorPalette[0].color);
       p.stroke(p.brightness(rectBorderColor) < 50 ? 255 : 0);
@@ -97,7 +95,6 @@ watch(colorPalette, () => {
 })
 
 watch(chosenSize, () => {
-  // console.log("chosenSize change detected!")
   resizeGrid();
   p5Instance.redraw();
 })

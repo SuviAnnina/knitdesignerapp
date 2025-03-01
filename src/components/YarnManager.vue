@@ -7,12 +7,9 @@ const handleAddColorPicker = () => {
     const emptySlotIndex = Object.keys(colorPalette).find(
         index => colorPalette[index].color === ''
     );
-    // console.log('empty slot key? ', emptySlotKey);
 
     if (emptySlotIndex) {
-        // console.log('found empty, attempting to update to white')
         updateColor(emptySlotIndex, '#ffffff');
-        // console.log('after uodate should be white ffff..: ', colorPalette[emptySlotIndex].color)
         updateShow(emptySlotIndex, true);
         console.log('empty slot index:',emptySlotIndex);
     } 
@@ -27,7 +24,7 @@ const handleAddColorPicker = () => {
 </script>
 <template>
     <div>
-        <p>colorPalette trial</p>
+        <p>Choose colors for the pattern</p>
         <div v-for="(colorObject, index ) in colorPalette" 
         :key="index" 
         v-show="colorPalette[index].show"        
@@ -36,19 +33,35 @@ const handleAddColorPicker = () => {
             :index="index"
             />
         </div>
-        <button @click="handleAddColorPicker">+</button>
-       
+    </div>
+    <div class="add-container">
+        <button @click="handleAddColorPicker">
+            <img src="/icons/add.svg" alt="Add" class="icon"/>
+        </button>
     </div>
 </template>
 
 <style>
-input {
-  width: 58px; 
+
+
+input[type="color"] {
+  -webkit-appearance: none; /* Remove default styles in WebKit browsers */
+  -moz-appearance: none; /* Remove default styles in Firefox */
+  appearance: none;
   border: none;
-  border-bottom: 1px solid #000000;
-  outline: none;
-  padding: 2px;
-  
+  background: none;
+  width: 25px;
+  height: 25px;
+  padding: 0;
+  cursor: pointer;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+input[type="color"]::-webkit-color-swatch {
+  border-radius: 20px;
 }
 
 .p-colorpicker-preview {
@@ -57,6 +70,23 @@ input {
   border-radius: 4px !important;
   border: 1px solid #ccc !important; 
   margin-right: 6px;
+}
+
+.icon {
+  width: 23px;
+  height: 23px;
+}
+
+button {
+  all: unset; /* Removes all default styles */
+  display: inline-block; /* Keeps it behaving like a button */
+  cursor: pointer; /* Ensures it still looks clickable */
+  width: 25px; 
+  height: 25px;
+}
+
+.add-container{
+    margin-top: 20px;
 }
 </style>
 

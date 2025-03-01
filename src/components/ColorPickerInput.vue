@@ -2,9 +2,7 @@
 import { ref, watch, defineProps } from "vue";
 import { updateColor, setColorEmpty, colorPalette, updateShow, selectedColorIndex, changeSelectedColor } from '@/colorPalette';
 
-// TODO: input checker
-
- const props = defineProps({
+const props = defineProps({
     index: Number
 });
 
@@ -22,7 +20,7 @@ const handleDeleteColorPicker = (index) => {
     console.log("poistetulta indeksipaikalta väritsekki, pitäs olla tyhjä: ", colorPalette[index].color);
 }
 
- const handleSelectedColor = (index) => {
+const handleSelectedColor = (index) => {
     console.log('default(1)/old selected color index : ', selectedColorIndex.value);
     console.log('clicked index: ',index);
     changeSelectedColor(index);
@@ -35,34 +33,45 @@ const handleDeleteColorPicker = (index) => {
     class="clickable-div"
     @click="handleSelectedColor(index)"
     >
-    index: {{ index }}
+        {{ index === 0 ? 'Main Color' : 'Color' }}
         <input type="color" v-model="color"/>
-<!--         <input v-model.lazy="color" placeholder="123456"/>
- -->        <button @click="handleDeleteColorPicker(index)" >X</button>
-        <button @click="handleSelectedColor(index)">S</button>
+<!--         <input v-model.lazy="color" placeholder="123456"/> -->        
+        <button @click="handleDeleteColorPicker(index)" v-if="index !== 0" >
+            <img src="/icons/delete.svg" alt="Delete" class="icon"/>
+        </button>
+        <button @click="handleSelectedColor(index)">
+            <img src="/icons/select.svg" alt="Select" class="icon"/>
+        </button>
     </div>
 </template>
 
 <style>
-.p-tooltip {
-  background-color: #ffffff; 
-  border-radius: 4px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
 .clickable-div{
     cursor:pointer;
     display: flex;
-    /* align-items: center; */
+    align-items: center;
     justify-content: center;
     gap: 8px;
 }
 
 .clickable-div:hover{
-    background-color: aliceblue;
+    background-color: rgb(226, 232, 228);
 }
 
 .clickable-div:active{
-    background-color: aquamarine;
+    background-color: rgb(136, 159, 152);
+}
+
+.icon {
+  width: 23px;
+  height: 23px;
+}
+
+button {
+  all: unset; /* Removes all default styles */
+  display: inline-block; /* Keeps it behaving like a button */
+  cursor: pointer; /* Ensures it still looks clickable */
+  width: 25px; 
+  height: 25px;
 }
 </style>
