@@ -23,9 +23,10 @@ onUnmounted(() => {
     <YarnManager />
     <br/>
     <br/>
-    <P5Grid />
-    <br />
-    <PatternImage />
+    <div class="container">
+      <P5Grid />
+      <PatternImage />
+    </div>
   </div>
 </template>
 
@@ -37,5 +38,12 @@ onUnmounted(() => {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+
+.container {
+  display: flex;
+  justify-content: center; /* Center them horizontally */
+  align-items: flex-start; /* Align them to the top */
+  gap: 20px; /* Space between components */
 }
 </style>

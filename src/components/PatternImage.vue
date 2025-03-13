@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, onBeforeUnmount } from "vue";
+import { onMounted, onBeforeUnmount, watch } from "vue";
 import { colorPalette } from "@/colorStore";
 import { grid } from "@/gridStore";
 import { selectedTemplate } from "@/templateStore";
@@ -37,7 +37,7 @@ let config = {
       return tau / this.count;
     }
   },
-  debug: true
+  debug: false
 }
 
 
@@ -75,12 +75,14 @@ const sketch = (p) => {
         p.circle(0, 0, p.width);
       }
 
-      for (let i = 0; i < config.slice.count; i++) {
-        drawSlice(i);
-      }
+      drawSlice(1)
+
+      // for (let i = 0; i < config.slice.count; i++) {
+      //   drawSlice(i);
+      // }
     };
 
-    function drawStitch(x, y, angle, colorCode) {
+    let drawStitch = (x, y, angle, colorCode) => {
       p.push();
       p.translate(x, y);
       p.rotate(angle);
@@ -89,7 +91,7 @@ const sketch = (p) => {
       p.pop();
     }
     
-    function drawSlice(sliceNumber) {
+    let drawSlice = (sliceNumber) => {
       const sliceAngle = config.slice.angle;
       const innerRadius = config.slice.innerRadius;
       const stitchHeight = config.stitch.height;
@@ -102,12 +104,10 @@ const sketch = (p) => {
           let theta = startAngle + offsetAngle;
     
           if (config.debug) {
-            // p.fill(colorPalette[grid[y][x]]);
-            p.fill(255, 0, 0);
+            p.fill(colorPalette[grid[y][x]].color);
             p.circle(polarToX(r, theta), polarToY(r, theta), 5);
           } else {
-            // drawStitch(polarToX(r, theta), polarToY(r, theta), theta + pi * 1.5, colorPalette[grid[y][x]]);
-            drawStitch(polarToX(r, theta), polarToY(r, theta), theta + pi * 1.5, "#32a852");
+            drawStitch(polarToX(r, theta), polarToY(r, theta), theta + pi * 1.5, colorPalette[grid[y][x]].color);
           }
         }
         if (config.debug) {
@@ -120,6 +120,13 @@ const sketch = (p) => {
 }
 }
 
+watch(colorPalette, () => {
+  p5Instance.redraw();
+})
+
+watch(grid, () => {
+  p5Instance.redraw();
+})
 
 onMounted(() => {
   p5Instance = new p5(sketch, document.getElementById("2d-pattern-container"));
