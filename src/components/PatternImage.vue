@@ -26,6 +26,7 @@ let config = {
     height: 900,
   },
   slice: {
+    img: null,
     count: 33,
     get innerRadius() {
       return this.count * selectedTemplate.value.rowLengths[0] * config.stitch.width / tau;
@@ -58,67 +59,90 @@ const sketch = (p) => {
     p.noLoop();
     p.imageMode(p.CENTER);
     config.stitch.img.resize(config.stitch.width, config.stitch.height);
-
+    
+    // TODO: button / component to save .png
     // Button
     // let button = p.createButton('Save canvas');
     // button.position(0, 950);
     // button.mousePressed(() => test());
-    };
+  };
+  
+  p.draw = () => {
+    let startTime = performance.now();
+    p.background(172, 255);
+    p.translate(p.width * 0.5, p.width * 0.5);
     
-    p.draw = () => {
-      p.background(172, 255);
-      p.translate(p.width * 0.5, p.width * 0.5);
-
-      if (config.debug) {
-        p.stroke(255);
-        p.fill(145);
-        p.circle(0, 0, p.width);
-      }
-
-      drawSlice(1)
-
-      // for (let i = 0; i < config.slice.count; i++) {
-      //   drawSlice(i);
-      // }
-    };
-
-    let drawStitch = (x, y, angle, colorCode) => {
-      p.push();
-      p.translate(x, y);
-      p.rotate(angle);
-      p.tint(p.color(colorCode));
-      p.image(config.stitch.img, 0, 0);
-      p.pop();
+    if (config.debug) {
+      p.stroke(255);
+      p.fill(145);
+      p.circle(0, 0, p.width);
     }
     
-    let drawSlice = (sliceNumber) => {
+    // drawSlice(23)
+    
+    // p.rect(50, 50, 100, 100);
+
+      createSlice();
+      // p.image(config.slice.img, 0, 0)
+      console.log(config.slice.img)
+      
+      for (let i = 0; i < config.slice.count; i++) {
+        drawSlice(i);
+      }
+
+      let endTime = performance.now();
+      console.log(`Draw time: ${(endTime - startTime).toFixed(2)} ms, ${((endTime - startTime) / 1000).toFixed(2)} s`);
+
+    };
+
+    let createSlice = () => {
+      const graphicHeight = p.sin(config.slice.angle * 0.5) * config.slice.outerRadius * 2;
+      config.slice.img = p.createGraphics(config.slice.outerRadius, graphicHeight);
+      config.slice.img.translate(0, graphicHeight * 0.5);
+      // config.slice.img.circle(0, 0, 10);
+
+      config.slice.img.background(200, 200)
+
       const sliceAngle = config.slice.angle;
       const innerRadius = config.slice.innerRadius;
       const stitchHeight = config.stitch.height;
-      const startAngle = sliceNumber * sliceAngle;
-    
-      for (let y = 0; y < selectedTemplate.value.rows; y++) {
-        for (let x = 0; x < selectedTemplate.value.rowLengths[y]; x++) {
+      const startAngle = sliceAngle * -0.5;
+
+      for (let y = 0; y < selectedTemplate.value.rows; y++){
+        for (let x = 0; x < selectedTemplate.value.rowLengths[y]; x++){
           let r = innerRadius + stitchHeight * y;
           let offsetAngle = x * sliceAngle / selectedTemplate.value.rowLengths[y];
           let theta = startAngle + offsetAngle;
-    
-          if (config.debug) {
-            p.fill(colorPalette[grid[y][x]].color);
-            p.circle(polarToX(r, theta), polarToY(r, theta), 5);
-          } else {
-            drawStitch(polarToX(r, theta), polarToY(r, theta), theta + pi * 1.5, colorPalette[grid[y][x]].color);
-          }
-        }
-        if (config.debug) {
-          const endAngle = startAngle + sliceAngle;
-          const outerRadius = config.slice.outerRadius;
-          p.line(polarToX(innerRadius, startAngle), polarToY(innerRadius, startAngle), polarToX(outerRadius, startAngle), polarToY(outerRadius, startAngle));
-          p.line(polarToX(innerRadius, endAngle), polarToY(innerRadius, endAngle), polarToX(outerRadius, endAngle), polarToY(outerRadius, endAngle));
+
+          drawStitch(polarToX(r, theta), polarToY(r, theta), theta + pi * 1.5, colorPalette[grid[y][x]].color);
+          // p.circle(polarToX(r, theta), polarToY(r, theta), 10);
         }
       }
-}
-}
+    }
+
+    let drawStitch = (x, y, angle, colorCode) => {
+      const s = config.slice.img;
+      s.push();
+      s.imageMode(p.CENTER);
+      s.translate(x, y);
+      s.rotate(angle);
+      s.tint(p.color(colorCode));
+      s.image(config.stitch.img, 0, 0);
+      s.pop();
+    }
+
+    let drawSlice = (sliceNumber) => {
+      const sliceAngle = config.slice.angle;
+      const r = config.slice.outerRadius * 0.5;
+      const theta = sliceNumber * sliceAngle;
+    
+      p.push()
+      p.translate(polarToX(r, theta), polarToY(r, theta))
+      p.rotate(theta)
+      p.image(config.slice.img, 0, 0)
+      p.pop()
+    }
+ }
 
 watch(colorPalette, () => {
   p5Instance.redraw();
