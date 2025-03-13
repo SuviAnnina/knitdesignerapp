@@ -1,3 +1,5 @@
+import { ref } from "vue";
+
 export const templates = [
     {
         size: "XS",
@@ -41,3 +43,8 @@ export function getTemplate(size) {
     return templates.find(template => template.size === size) || null;
 }
 
+export const selectedTemplate = ref(getTemplate("S"));
+
+export function setSelectedTemplate(size) {
+    selectedTemplate.value = getTemplate(size);
+}

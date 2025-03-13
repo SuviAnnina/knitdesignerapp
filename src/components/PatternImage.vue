@@ -1,6 +1,9 @@
 <script setup>
 import { onMounted, onBeforeUnmount } from "vue";
-// import { colorPalette, selectedColorIndex } from "@/colorPalette";
+// import { colorPalette } from "@/colorPalette";
+// import { grid } from "@/gridStore";
+
+// Draws the "donut" .png 
 
 import p5 from "p5";
 

@@ -2,6 +2,7 @@
 import YarnManager from './components/YarnManager.vue';
 import P5Grid from './components/P5Grid.vue';
 import { onMounted, onUnmounted } from "vue";
+import PatternImage from './components/PatternImage.vue';
 
 const handleBeforeUnload = (event) => {
   event.preventDefault();
@@ -23,6 +24,8 @@ onUnmounted(() => {
     <br/>
     <br/>
     <P5Grid />
+    <br />
+    <PatternImage />
   </div>
 </template>
 

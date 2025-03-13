@@ -3,13 +3,11 @@ import { onMounted, onBeforeUnmount, watch } from "vue";
 import p5 from "p5";
 import { colorPalette, selectedColorIndex, canvasColor } from "@/colorStore";
 import { ref } from 'vue';
-import { getTemplate } from "@/templateStore";
-import PatternImage from "./PatternImage.vue";
+import { selectedTemplate, setSelectedTemplate } from "@/templateStore";
 import { grid, resizeGrid, setGridValue } from "@/gridStore";
 
 let p5Instance;
 const chosenSize = ref("S");
-let selectedTemplate = getTemplate(chosenSize.value);
 
 const squareWidth = 20;
 
@@ -17,7 +15,7 @@ const handleClearGrid = () => {
   const isConfirmed = confirm("Are you sure you want to clear canvas?");
 
   if (isConfirmed){
-    resizeGrid(selectedTemplate); 
+    resizeGrid(selectedTemplate.value); 
     p5Instance.redraw();
   }
 }
@@ -35,8 +33,8 @@ const sketch = (p) => {
       let rectBorderColor = p.color(colorPalette[0].color);
       p.stroke(p.brightness(rectBorderColor) < 50 ? 255 : 0);
 
-      for (let y = 0; y < selectedTemplate.rows; y++){
-        for (let x = 0; x < selectedTemplate.rowLengths[y]; x++){
+      for (let y = 0; y < selectedTemplate.value.rows; y++){
+        for (let x = 0; x < selectedTemplate.value.rowLengths[y]; x++){
           p.fill(colorPalette[grid[y][x]].color);
           p.square(x * squareWidth, y * squareWidth, squareWidth);
         }
@@ -65,13 +63,13 @@ watch(colorPalette, () => {
 })
 
 watch(chosenSize, () => {
-  selectedTemplate = getTemplate(chosenSize.value);
-  resizeGrid(selectedTemplate);
+  setSelectedTemplate(chosenSize.value);
+  resizeGrid(selectedTemplate.value);
   p5Instance.redraw();
 })
 
 onMounted(() => {
-  resizeGrid(selectedTemplate);
+  resizeGrid(selectedTemplate.value);
   p5Instance = new p5(sketch, document.getElementById("p5-container"));
 });
 
@@ -96,7 +94,6 @@ onBeforeUnmount(() => {
   <div>
     <button @click="handleClearGrid" class="clearcanvas">Clear canvas</button>
   </div>
-  <PatternImage />
 </template>
 
 <style>
