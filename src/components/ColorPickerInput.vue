@@ -1,6 +1,6 @@
 <script setup>
 import { ref, watch, defineProps } from "vue";
-import { updateColor, setColorEmpty, colorPalette, updateShow, selectedColorIndex, changeSelectedColor } from '@/colorPalette';
+import { updateColor, setColorEmpty, colorPalette, updateShow, selectedColorIndex, changeSelectedColor } from '@/colorStore';
 
 const props = defineProps({
     index: Number

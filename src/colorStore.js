@@ -2,6 +2,8 @@ import { reactive, ref } from 'vue'
 
 export const selectedColorIndex = ref(1);
 
+export const canvasColor = "#EDF9EB";
+
 export const colorPalette = reactive([
     {
         color: "#ba9cba",

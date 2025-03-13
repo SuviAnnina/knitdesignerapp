@@ -1,6 +1,6 @@
 <script setup>
 import ColorPickerInput from './ColorPickerInput.vue';
-import { colorPalette, updateColor, updateShow } from '@/colorPalette';
+import { colorPalette, updateColor, updateShow } from '@/colorStore';
 
 const handleAddColorPicker = () => {
     // Find empty color slot
