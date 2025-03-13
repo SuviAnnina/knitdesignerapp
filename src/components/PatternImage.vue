@@ -18,7 +18,7 @@ let config = {
       return config.slice.outerRadius * config.slice.angle / 8;
     },
     get height() {
-      return (config.slice.outerRadius - config.slice.innerRadius) / grid.length;
+      return (config.slice.outerRadius - config.slice.innerRadius) / selectedTemplate.value.rows; //grid.length;
     }
   },
   canvas: {
@@ -96,12 +96,12 @@ const sketch = (p) => {
     };
 
     let createSlice = () => {
-      const graphicHeight = p.sin(config.slice.angle * 0.5) * config.slice.outerRadius * 2;
+      const graphicHeight = p.sin(config.slice.angle * 0.5) * config.slice.outerRadius * 2 + 10;
       config.slice.img = p.createGraphics(config.slice.outerRadius, graphicHeight);
       config.slice.img.translate(0, graphicHeight * 0.5);
       // config.slice.img.circle(0, 0, 10);
 
-      config.slice.img.background(200, 200)
+      // config.slice.img.background(200, 200)
 
       const sliceAngle = config.slice.angle;
       const innerRadius = config.slice.innerRadius;
