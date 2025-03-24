@@ -4,23 +4,23 @@ import p5 from "p5";
 import { colorPalette, selectedColorIndex, canvasColor } from "@/colorStore";
 import { ref } from 'vue';
 import { selectedTemplate, setSelectedTemplate } from "@/templateStore";
-import { grid, resizeGrid, setGridValue } from "@/gridStore";
+import { grid, clearGrid, setGridValue } from '@/gridStore'
 
 let p5Instance;
 const chosenSize = ref("S");
-
 const squareWidth = 20;
 
 const handleClearGrid = () => {
   const isConfirmed = confirm("Are you sure you want to clear canvas?");
-
+  
   if (isConfirmed){
-    resizeGrid(selectedTemplate.value); 
+    clearGrid(); 
     p5Instance.redraw();
   }
 }
 
 const sketch = (p) => {
+
   p.setup = () => {
       p.createCanvas(180, 1010);
       p.background(canvasColor);
@@ -30,29 +30,42 @@ const sketch = (p) => {
     p.draw = () => {
       p.background(canvasColor);
       // rectangles bordercolor either black or white depending on mainColor
-      let rectBorderColor = p.color(colorPalette[0].color);
+      let rectBorderColor = p.color(colorPalette[1].color);
       p.stroke(p.brightness(rectBorderColor) < 50 ? 255 : 0);
 
-      for (let y = 0; y < selectedTemplate.value.rows; y++){
-        for (let x = 0; x < selectedTemplate.value.rowLengths[y]; x++){
-          p.fill(colorPalette[grid[y][x]].color);
-          p.square(x * squareWidth, y * squareWidth, squareWidth);
+      for (let row = 0; row < grid.length; row++){
+        if (selectedTemplate.value.skipRows.includes(row)){
+          // p.translate(0, -squareWidth); // TODO: grid remains seamless after skipping; requires mouse handler update
+          continue;
+        }
+        for (let column = 0; column < 8; column++){
+          if (grid[row][column] === 0){
+            continue;
+          } 
+          p.fill(colorPalette[grid[row][column]].color);
+          p.square(column * squareWidth, row * squareWidth, squareWidth);
         }
       }
+        // p.translate(0, squareWidth * (selectedTemplate.value.skipRows.length  - 1));
+      
     };
 
-      p.mouseClicked = (event) => {
-        if (p.mouseX < 0 || p.mouseX > p.width || p.mouseY < 0 || p.mouseY > p.height ){
+    // const sortedIndex = (arr, val) => arr.findIndex(n => n > val);
+
+      p.mouseClicked = () => {
+        if (p.mouseX < 0 || p.mouseX > p.width || p.mouseY < 0 || p.mouseY > p.height){
           return
         }
-        let x = p.floor(event.offsetX / squareWidth);
-        let y = p.floor(event.offsetY / squareWidth);
-        
-        // TODO: user adds new color and clicks box, box filled with new color (currently filled background color, click, new color)
-        if (grid[y][x] == 0){
+        const x = p.floor(p.mouseX / squareWidth);
+        let y = p.floor(p.mouseY / squareWidth);
+        // clicking outside visible grid does nothing
+        if ( grid[y][x] === 0) {
+          return
+        }
+        if (grid[y][x] !== selectedColorIndex.value){
           setGridValue(x, y, selectedColorIndex.value);
         } else {
-          setGridValue(x, y, 0);
+          setGridValue(x, y, 1);
         }
         p.redraw();
       }
@@ -64,12 +77,10 @@ watch(colorPalette, () => {
 
 watch(chosenSize, () => {
   setSelectedTemplate(chosenSize.value);
-  resizeGrid(selectedTemplate.value);
   p5Instance.redraw();
 })
 
 onMounted(() => {
-  resizeGrid(selectedTemplate.value);
   p5Instance = new p5(sketch, document.getElementById("p5-container"));
 });
 

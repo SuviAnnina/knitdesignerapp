@@ -4,37 +4,41 @@ export const selectedColorIndex = ref(1);
 
 export const canvasColor = "#EDF9EB";
 
-export const colorPalette = reactive([
+export const colorPalette = reactive([ // TODO: color indexes moved up; index 0 now no-color/empty; usable colors 1-8; yarnmanager logic changes
+    {
+        color: "#000000",
+        show: false,
+    },
     {
         color: "#ba9cba",
         show: true,
     },
     {
-        color: "#ffffff",
+        color: "#00FF00",
         show: true,
     },
     {
-        color: "",
+        color: "#0000FF",
+        show: true,
+    },
+    {
+        color: "#FFFF00",
         show: false,
     },
     {
-        color: "",
+        color: "#FF00FF",
         show: false,
     },
     {
-        color: "",
+        color: "#00FFFF",
         show: false,
     },
     {
-        color: "",
+        color: "#FF8000",
         show: false,
     },
     {
-        color: "",
-        show: false,
-    },
-    {
-        color: "",
+        color: "#8000FF",
         show: false,
     },
 ])

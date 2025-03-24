@@ -2,6 +2,8 @@
 import ColorPickerInput from './ColorPickerInput.vue';
 import { colorPalette, updateColor, updateShow } from '@/colorStore';
 
+// TODO: change logic to display colorpickers 1...9
+
 const handleAddColorPicker = () => {
     // Find empty color slot
     const emptySlotIndex = Object.keys(colorPalette).find(

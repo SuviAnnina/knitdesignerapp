@@ -34,7 +34,7 @@ const handleSelectedColor = (index) => {
     @click="handleSelectedColor(index)"
     >
         {{ index === 0 ? 'Main Color' : 'Color' }}
-        <input type="color" v-model="color"/>
+        <input type="color" v-model.lazy="color"/>
 <!--         <input v-model.lazy="color" placeholder="123456"/> -->        
         <button @click="handleDeleteColorPicker(index)" v-if="index !== 0" >
             <img src="/icons/delete.svg" alt="Delete" class="icon"/>

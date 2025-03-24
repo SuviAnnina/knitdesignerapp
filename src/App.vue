@@ -25,11 +25,12 @@ onUnmounted(() => {
     <br/>
     <div class="container">
       <P5Grid />
-      <PatternImage />
     </div>
   </div>
 </template>
 
+<!-- <PatternImage /> -->
+ 
 <style>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
