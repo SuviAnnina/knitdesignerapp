@@ -3,8 +3,8 @@ import { onMounted, onBeforeUnmount, watch } from "vue";
 import p5 from "p5";
 import { colorPalette, selectedColorIndex, canvasColor } from "@/colorStore";
 import { ref } from 'vue';
-import { selectedTemplate, setSelectedTemplate } from "@/templateStore";
-import { grid, clearGrid, setGridValue } from '@/gridStore'
+import { setSelectedTemplate } from "@/templateStore";
+import { clearGrid, setGridValue, getGridLength, getRow } from '@/gridStore'
 
 let p5Instance;
 const chosenSize = ref("S");
@@ -20,7 +20,6 @@ const handleClearGrid = () => {
 }
 
 const sketch = (p) => {
-
   p.setup = () => {
       p.createCanvas(180, 1010);
       p.background(canvasColor);
@@ -33,36 +32,34 @@ const sketch = (p) => {
       let rectBorderColor = p.color(colorPalette[1].color);
       p.stroke(p.brightness(rectBorderColor) < 50 ? 255 : 0);
 
-      for (let row = 0; row < grid.length; row++){
-        if (selectedTemplate.value.skipRows.includes(row)){
-          // p.translate(0, -squareWidth); // TODO: grid remains seamless after skipping; requires mouse handler update
-          continue;
-        }
-        for (let column = 0; column < 8; column++){
-          if (grid[row][column] === 0){
+      // draws the grid
+      for (let y = 0; y < getGridLength(); y++){
+        let row = getRow(y);
+        for (let x = 0; x < 8; x++){
+          if (row[x] === 0){
             continue;
           } 
-          p.fill(colorPalette[grid[row][column]].color);
-          p.square(column * squareWidth, row * squareWidth, squareWidth);
+          p.fill(colorPalette[row[x]].color);
+          p.square(x * squareWidth, y * squareWidth, squareWidth);
         }
       }
-        // p.translate(0, squareWidth * (selectedTemplate.value.skipRows.length  - 1));
-      
     };
 
-    // const sortedIndex = (arr, val) => arr.findIndex(n => n > val);
-
+      // handles the mouseclick for setting a squares color
       p.mouseClicked = () => {
         if (p.mouseX < 0 || p.mouseX > p.width || p.mouseY < 0 || p.mouseY > p.height){
           return
         }
         const x = p.floor(p.mouseX / squareWidth);
         let y = p.floor(p.mouseY / squareWidth);
+
+        const row = getRow(y);
         // clicking outside visible grid does nothing
-        if ( grid[y][x] === 0) {
+        if ( row[x] === 0) {
           return
         }
-        if (grid[y][x] !== selectedColorIndex.value){
+        // sets square to chosen color or main color
+        if (row[x] !== selectedColorIndex.value){
           setGridValue(x, y, selectedColorIndex.value);
         } else {
           setGridValue(x, y, 1);

@@ -3,23 +3,23 @@ import { ref } from "vue";
 export const templates = [
     {
         size: "XS",
-        skipRows: [0, 4, 11, 15, 30, 34, 49], // yht 43 jäljellä
+        skipRows: [0, 4, 11, 15, 30, 34, 49],
     },
     {
         size: "S",
-        skipRows: [4, 11, 15, 30, 34, 49], // yht 44 jäljellä
+        skipRows: [4, 11, 15, 30, 34, 49],
     },
     {
         size: "M",
-        skipRows: [4, 11, 15, 30, 34], // yht 45 jäljellä
+        skipRows: [4, 11, 15, 30, 34],
     },
     {
         size: "L",
-        skipRows: [4, 15, 34], // yht 47 jäljellä
+        skipRows: [4, 15, 34],
     },
     {
         size: "XL",
-        skipRows: [34], // yht 49 jäljellä
+        skipRows: [15, 34],
     },
     {
         size: "XXL",
