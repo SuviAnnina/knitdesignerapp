@@ -1,13 +1,13 @@
 <script setup>
 import ColorPickerInput from './ColorPickerInput.vue';
-import { colorPalette, updateColor, updateShow } from '@/colorStore';
+import { palette, updateColor, updateShow } from '@/colorStore';
 
 // TODO: change logic to display colorpickers 1...9
 
 const handleAddColorPicker = () => {
     // Find empty color slot
-    const emptySlotIndex = Object.keys(colorPalette).find(
-        index => colorPalette[index].color === ''
+    const emptySlotIndex = Object.keys(palette).find(
+        index => palette[index].color === ''
     );
 
     if (emptySlotIndex) {
@@ -18,8 +18,8 @@ const handleAddColorPicker = () => {
     else {
         alert("You can't add more than 8 colors!");
     }
-    for (const color in colorPalette){
-        console.log(`${color}: ${colorPalette[color].color}`);
+    for (const color in palette){
+        console.log(`${color}: ${palette[color].color}`);
     }
 };
 
@@ -27,9 +27,9 @@ const handleAddColorPicker = () => {
 <template>
     <div>
         <p>Choose colors for the pattern</p>
-        <div v-for="(colorObject, index ) in colorPalette" 
+        <div v-for="(colorObject, index ) in palette" 
         :key="index" 
-        v-show="colorPalette[index].show"        
+        v-show="palette[index].show"        
         >
             <ColorPickerInput 
             :index="index"

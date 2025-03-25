@@ -91,3 +91,7 @@ export const getRow = (index) => {
     }
     return grid[index + sortedIndex];
 }
+
+export const getRowLength = (index) => {
+    return 8 - getRow(index).filter(num => num === 0).length;
+}

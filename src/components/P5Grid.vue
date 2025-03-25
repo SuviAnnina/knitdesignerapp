@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, onBeforeUnmount, watch } from "vue";
 import p5 from "p5";
-import { colorPalette, selectedColorIndex, canvasColor } from "@/colorStore";
+import { palette, selectedColorIndex, canvasColor } from "@/colorStore";
 import { ref } from 'vue';
 import { setSelectedTemplate } from "@/templateStore";
 import { clearGrid, setGridValue, getGridLength, getRow } from '@/gridStore'
@@ -29,7 +29,7 @@ const sketch = (p) => {
     p.draw = () => {
       p.background(canvasColor);
       // rectangles bordercolor either black or white depending on mainColor
-      let rectBorderColor = p.color(colorPalette[1].color);
+      let rectBorderColor = p.color(palette[1].color);
       p.stroke(p.brightness(rectBorderColor) < 50 ? 255 : 0);
 
       // draws the grid
@@ -39,7 +39,7 @@ const sketch = (p) => {
           if (row[x] === 0){
             continue;
           } 
-          p.fill(colorPalette[row[x]].color);
+          p.fill(palette[row[x]].color);
           p.square(x * squareWidth, y * squareWidth, squareWidth);
         }
       }
@@ -68,7 +68,7 @@ const sketch = (p) => {
       }
     }
 
-watch(colorPalette, () => {
+watch(palette, () => {
   p5Instance.redraw();
 })
 

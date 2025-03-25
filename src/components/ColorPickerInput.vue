@@ -1,23 +1,23 @@
 <script setup>
 import { ref, watch, defineProps } from "vue";
-import { updateColor, setColorEmpty, colorPalette, updateShow, selectedColorIndex, changeSelectedColor } from '@/colorStore';
+import { updateColor, setColorEmpty, palette, updateShow, selectedColorIndex, changeSelectedColor } from '@/colorStore';
 
 const props = defineProps({
     index: Number
 });
 
-const color = ref(colorPalette[props.index].color);
+const color = ref(palette[props.index].color);
 
 watch(color, (newColor) => {
-    console.log("vanha väri: ", colorPalette[props.index].color);
+    console.log("vanha väri: ", palette[props.index].color);
     updateColor(props.index, newColor);
-    console.log("uusi väri: ", colorPalette[props.index].color)
+    console.log("uusi väri: ", palette[props.index].color)
 });
 
 const handleDeleteColorPicker = (index) => {
     setColorEmpty(index);
     updateShow(index, false);
-    console.log("poistetulta indeksipaikalta väritsekki, pitäs olla tyhjä: ", colorPalette[index].color);
+    console.log("poistetulta indeksipaikalta väritsekki, pitäs olla tyhjä: ", palette[index].color);
 }
 
 const handleSelectedColor = (index) => {
