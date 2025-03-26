@@ -67,6 +67,14 @@ const sketch = (p) => {
     // let button = p.createButton('Save canvas');
     // button.position(0, 950);
     // button.mousePressed(() => test());
+    let button = p.createButton('Save canvas');
+    button.position(0, 950);
+    button.mousePressed(() => {
+      config.yoke.img.save("yoke.png")
+      config.yoke.filledImg.save("filledyoke.png")
+      config.filler.img.save("filler.png")
+
+    });
   };
   
   p.draw = () => {
@@ -82,8 +90,8 @@ const sketch = (p) => {
       createSlice();
       createYoke();
       p.image(config.yoke.img, 0, 0, p.width, p.height);
-      // createFiller();
-      // createFilledYoke();
+      createFiller();
+      createFilledYoke();
       
       let endTime = performance.now();
       console.log(`Draw time: ${(endTime - startTime).toFixed(2)} ms, ${((endTime - startTime) / 1000).toFixed(2)} s`);
@@ -225,8 +233,10 @@ const sketch = (p) => {
     drawFillerToCorner(2);
     drawFillerToCorner(3);
 
+    const sliceMaxRadius = config.slice.innerRadius + config.stitch.width * 0.5 + (getGridLength() - 1) * config.stitch.overlapFactor * config.stitch.width;
+    const eraseDiameter = sliceMaxRadius * config.texture.width / config.slice.outerRadius;
     config.yoke.filledImg.erase();
-    config.yoke.filledImg.circle(config.texture.width * 0.5, config.texture.height * 0.5, config.slice.innerRadius * 2 - config.stitch.width * (1 - config.stitch.overlapFactor));
+    config.yoke.filledImg.circle(config.texture.width * 0.5, config.texture.height * 0.5, eraseDiameter);
     config.yoke.filledImg.noErase();
 
     config.yoke.filledImg.imageMode(p.CORNERS);
