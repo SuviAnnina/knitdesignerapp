@@ -8,13 +8,13 @@ import { selectedTemplate } from "@/templateStore";
 
 // TODO: clean package.json linter settings!
 
-let p5Instance;
+let p;
 const pi = 3.141592653589793;
 const tau = 6.283185307179586;
 
 let config = {
   stitch: {
-    img: null, // set in setup: image setting p5 specific
+    img: null,
     imgPath: './stitch.png',
     overlapFactor: 0.85,
     width: 32,
@@ -50,20 +50,21 @@ let config = {
   },
 }
 
-
-const sketch = (p) => {
-  p.preload = () => {
-    config.stitch.img = p.loadImage(config.stitch.imgPath);
+const sketch = (p5Instance) => {
+  p5Instance.preload = () => {
+    config.stitch.img = p5Instance.loadImage(config.stitch.imgPath);
   }
 
-  p.setup = () => {
-    p.createCanvas(config.canvas.width, config.canvas.height);
-    p.noLoop();
-    p.imageMode(p.CORNERS);
+  p5Instance.setup = () => {
+    p5Instance.createCanvas(config.canvas.width, config.canvas.height);
+    p5Instance.noLoop();
+    p5Instance.imageMode(p5Instance.CORNERS);
     
+    createYoke();
     createFiller();
+    createFilledYoke();
 
-    let button = p.createButton('Save canvas');
+    let button = p5Instance.createButton('Save canvas');
     button.position(0, 950);
     button.mousePressed(() => {
       config.yoke.img.save("yoke.png")
@@ -72,188 +73,202 @@ const sketch = (p) => {
     });
   };
   
-  p.draw = () => {
+  p5Instance.draw = () => {
     let startTime = performance.now();
-    p.background(172, 255);
+    p5Instance.background(172, 255);
         
-    createSlice();
-    createYoke();
-    p.image(config.yoke.img, 0, 0, p.width, p.height);
-    createFilledYoke();
+    p5Instance.image(config.yoke.img, 0, 0, p5Instance.width, p5Instance.height);
     
     let endTime = performance.now();
-    console.log(`Draw time: ${(endTime - startTime).toFixed(2)} ms, ${((endTime - startTime) / 1000).toFixed(2)} s`);
-    };
+    console.log(`[time] draw: ${(endTime - startTime).toFixed(4)} ms, ${((endTime - startTime) / 1000).toFixed(2)} s`);
+    console.log('')
+  };
+}
 
-  const createSlice = () => {
-    const graphicHeight = config.slice.outerRadius * Math.tan(config.slice.angle * 0.5) * 2 + config.stitch.width;
-    let slice = config.slice;
+const drawStitch = (x, y, angle, colorCode, target) => {
+  target.push();
+  target.translate(x, y);
+  target.rotate(angle);
+  target.tint(p.color(colorCode));
+  target.image(config.stitch.img, 0, 0);
+  target.pop();
+  }
 
-    slice.img = cleanupGraphic(slice.img);
+const createSlice = () => {
+  const startTime = performance.now();
+  const graphicHeight = config.slice.outerRadius * Math.tan(config.slice.angle * 0.5) * 2 + config.stitch.width;
+  let slice = config.slice;
 
-    slice.img = p.createGraphics(slice.outerRadius, graphicHeight);
-    slice.img.imageMode(p.CENTER);
-    slice.img.translate(0, graphicHeight * 0.5);
-    config.stitch.img.resize(config.stitch.width, config.stitch.width);
-    
-    let leanPairIndex = 0;
-    const leanPairs = [[4, 5, false], [1, 2, true], [5, 6, false], [0, 1, true], [6, 7, false]];
+  slice.img = cleanupGraphic(slice.img);
 
-    const coefficients = [ //TODO: do some more tuning to make ~prettie~
-      [],
-      [],
-      [],
-      //green               blue                   yellow                    pink                 teal                     orange              purple               bluish-green
-      [1, 1, 7 / 32, 0, -15 / 64, 1, 1, 1],                              // 3          
-      [1, 1, 7 / 32, 0, -1 / 8 * 1.3, -11 / 32, 1, 1],                                   // 4           
-      [1, 5 / 16, 1 / 8, 0, -1 / 8 * 1.25, -11 / 32, 1, 1],                              // 5            
-      [1, 5 / 16, 1 / 8, 0, -1 / 8 * 1.2, -2 / 8 * 1.1, -7 / 16, 1],                             // 6       
-      [3 / 8, 2 / 8, 1 / 8, 0, -1 / 8 * 1.1, -2 / 8 * 1.1, -7 / 16, 1],                                      // 7
-      [3 / 8, 2 / 8, 1 / 8, 0, -1 / 8, -2 / 8, -3 / 8, -4 / 8],                                      // 8
-    ];
+  slice.img = p.createGraphics(slice.outerRadius, graphicHeight);
+  slice.img.imageMode(p.CENTER);
+  slice.img.translate(0, graphicHeight * 0.5);
+  config.stitch.img.resize(config.stitch.width, config.stitch.width);
+  
+  let leanPairIndex = 0;
+  const leanPairs = [[4, 5, false], [1, 2, true], [5, 6, false], [0, 1, true], [6, 7, false]];
 
-    const spacing = config.stitch.overlapFactor * config.stitch.width;
-    
-    for (let y = 0; y < getGridLength(); y++) {
-      let row = getRow(y);
-      let spread = mapCurve(y, 0, getGridLength(), 1.45, 1, easeOutQuad);
-      // let spread = mapCurve(y, 0, getGridLength(), 1.45, 1, easeOutCubic);
-      // let spread = mapCurve(y, 0, getGridLength(), 1.45, 1, easeOutQuart);
-      // let spread = mapCurve(y, 0, getGridLength(), 1.45, 1, easeOutQuint);
-      // let spread = mapCurve(y, 0, getGridLength(), 1.45, 1, easeOutExpo);
-      // let spread = mapCurve(y, 0, getGridLength(), 1.45, 1, easeOutSine);
-      let r = config.slice.innerRadius + config.stitch.width * 0.5 + y * spacing;
-      let needsLean = isMerging(y);
-      for (let x = 0; x < 8; x++) {
-        // check if there is a stitch to draw
-        if (row[x] === 0) {
-          continue;
+  const coefficients = [ //TODO: do some more tuning to make ~prettie~
+    [],
+    [],
+    [],
+    //green               blue                   yellow                    pink                 teal                     orange              purple               bluish-green
+    [1, 1, 7 / 32, 0, -15 / 64, 1, 1, 1],                              // 3          
+    [1, 1, 7 / 32, 0, -1 / 8 * 1.3, -11 / 32, 1, 1],                                   // 4           
+    [1, 5 / 16, 1 / 8, 0, -1 / 8 * 1.25, -11 / 32, 1, 1],                              // 5            
+    [1, 5 / 16, 1 / 8, 0, -1 / 8 * 1.2, -2 / 8 * 1.1, -7 / 16, 1],                             // 6       
+    [3 / 8, 2 / 8, 1 / 8, 0, -1 / 8 * 1.1, -2 / 8 * 1.1, -7 / 16, 1],                                      // 7
+    [3 / 8, 2 / 8, 1 / 8, 0, -1 / 8, -2 / 8, -3 / 8, -4 / 8],                                      // 8
+  ];
+
+  const spacing = config.stitch.overlapFactor * config.stitch.width;
+  
+  for (let y = 0; y < getGridLength(); y++) {
+    let row = getRow(y);
+    let spread = mapCurve(y, 0, getGridLength(), 1.45, 1, easeOutQuad);
+    // let spread = mapCurve(y, 0, getGridLength(), 1.45, 1, easeOutCubic);
+    // let spread = mapCurve(y, 0, getGridLength(), 1.45, 1, easeOutQuart);
+    // let spread = mapCurve(y, 0, getGridLength(), 1.45, 1, easeOutQuint);
+    // let spread = mapCurve(y, 0, getGridLength(), 1.45, 1, easeOutExpo);
+    // let spread = mapCurve(y, 0, getGridLength(), 1.45, 1, easeOutSine);
+    let r = config.slice.innerRadius + config.stitch.width * 0.5 + y * spacing;
+    let needsLean = isMerging(y);
+    for (let x = 0; x < 8; x++) {
+      // check if there is a stitch to draw
+      if (row[x] === 0) {
+        continue;
+      }
+      let theta = coefficients[getRowLength(y)][x] * config.slice.angle * spread;
+      let angle = theta - pi * 0.5;
+
+      // checks per x for a lean pair based on the first stitch
+      if (needsLean && x == leanPairs[leanPairIndex][0]) {
+        let nextTheta = coefficients[getRowLength(y)][x + 1] * config.slice.angle * spread;
+        let quarterDistance = (nextTheta - theta) * 0.25;
+        let nextAngle = nextTheta - pi * 0.5;
+
+        angle += config.stitch.leanAngleOffset;
+        nextAngle -= config.stitch.leanAngleOffset;
+
+        theta += quarterDistance;
+        nextTheta -= quarterDistance;
+
+        // Draws right or left leaning stitch on top
+        if (leanPairs[leanPairIndex][2]) {
+          drawStitch(polarToX(r, theta), polarToY(r, theta), angle, palette[row[x]].color, slice.img);
+          drawStitch(polarToX(r, nextTheta), polarToY(r, nextTheta), nextAngle, palette[row[x + 1]].color, slice.img);
         }
-        let theta = coefficients[getRowLength(y)][x] * config.slice.angle * spread;
-        let angle = theta - pi * 0.5;
-
-        // checks per x for a lean pair based on the first stitch
-        if (needsLean && x == leanPairs[leanPairIndex][0]) {
-          let nextTheta = coefficients[getRowLength(y)][x + 1] * config.slice.angle * spread;
-          let quarterDistance = (nextTheta - theta) * 0.25;
-          let nextAngle = nextTheta - pi * 0.5;
-
-          angle += config.stitch.leanAngleOffset;
-          nextAngle -= config.stitch.leanAngleOffset;
-
-          theta += quarterDistance;
-          nextTheta -= quarterDistance;
-
-          // Draws right or left leaning stitch on top
-          if (leanPairs[leanPairIndex][2]) {
-            drawStitch(polarToX(r, theta), polarToY(r, theta), angle, palette[row[x]].color, slice.img);
-            drawStitch(polarToX(r, nextTheta), polarToY(r, nextTheta), nextAngle, palette[row[x + 1]].color, slice.img);
-          }
-          else {
-            drawStitch(polarToX(r, nextTheta), polarToY(r, nextTheta), nextAngle, palette[row[x + 1]].color, slice.img);
-            drawStitch(polarToX(r, theta), polarToY(r, theta), angle, palette[row[x]].color, slice.img);
-          }
-
-          x++;
-          needsLean = false;
-          leanPairIndex++;
-        } else {
+        else {
+          drawStitch(polarToX(r, nextTheta), polarToY(r, nextTheta), nextAngle, palette[row[x + 1]].color, slice.img);
           drawStitch(polarToX(r, theta), polarToY(r, theta), angle, palette[row[x]].color, slice.img);
         }
+
+        x++;
+        needsLean = false;
+        leanPairIndex++;
+      } else {
+        drawStitch(polarToX(r, theta), polarToY(r, theta), angle, palette[row[x]].color, slice.img);
       }
     }
   }
+  const endTime = performance.now();
+  console.log(`[time] createSlice: ${(endTime - startTime).toFixed(4)} ms, ${((endTime - startTime) / 1000).toFixed(2)} s`);
+}
 
-  const drawStitch = (x, y, angle, colorCode, target) => {
-    target.push();
-    target.translate(x, y);
-    target.rotate(angle);
-    target.tint(p.color(colorCode));
-    target.image(config.stitch.img, 0, 0);
-    target.pop();
+const drawSlice = (sliceNumber) => {
+  const theta = config.slice.angle * sliceNumber;
+  const r = config.slice.outerRadius * 0.5;
+
+  config.yoke.img.push();
+  config.yoke.img.translate(polarToX(r, theta), polarToY(r, theta));
+  config.yoke.img.rotate(theta);
+  config.yoke.img.image(config.slice.img, 0, 0);
+  config.yoke.img.pop();
+}
+
+const createYoke = () => {
+  createSlice();
+  const startTime = performance.now();
+
+  config.yoke.img = cleanupGraphic(config.yoke.img);
+  config.yoke.img = p.createGraphics(config.slice.outerRadius * 2, config.slice.outerRadius * 2);
+  config.yoke.img.imageMode(p.CENTER);
+  config.yoke.img.translate(config.slice.outerRadius, config.slice.outerRadius);
+
+
+  for (let i = 0; i < config.slice.count; i++) {
+    drawSlice(i);
+  }
+  const endTime = performance.now();
+    console.log(`[time] createYoke: ${(endTime - startTime).toFixed(4)} ms, ${((endTime - startTime) / 1000).toFixed(2)} s`);
+}
+
+const createFiller = () => {
+  const startTime = performance.now();
+  config.filler.img = cleanupGraphic(config.filler.img);
+  config.filler.img = p.createGraphics(config.texture.width, config.texture.height);
+  config.filler.img.imageMode(p.CORNER); 
+
+  // determine stitch size to visually match yoke's stitch size 
+  const scaledStitchWidth = config.stitch.width / (config.stitch.overlapFactor * config.slice.outerRadius * 2 / config.texture.width);
+  const fullStitchCount = Math.floor(config.texture.width / scaledStitchWidth);
+  const remainderWidth = config.texture.width - fullStitchCount * scaledStitchWidth;
+  const spacing = remainderWidth / fullStitchCount;
+
+  config.stitch.img.resize(scaledStitchWidth, 0);
+
+  let oneColumn = p.createGraphics(scaledStitchWidth + spacing, config.texture.height);
+  for (let y = scaledStitchWidth * -config.stitch.overlapFactor; y < config.texture.height; y += scaledStitchWidth * config.stitch.overlapFactor) {
+    drawStitch(0, y, 0, palette[1].color, oneColumn);
   }
 
-  const drawSlice = (sliceNumber) => {
-    const theta = config.slice.angle * sliceNumber;
-    const r = config.slice.outerRadius * 0.5;
-
-    config.yoke.img.push();
-    config.yoke.img.translate(polarToX(r, theta), polarToY(r, theta));
-    config.yoke.img.rotate(theta);
-    config.yoke.img.image(config.slice.img, 0, 0);
-    config.yoke.img.pop();
+  for (let x = 0; x < config.texture.width; x += scaledStitchWidth + spacing) {
+    config.filler.img.image(oneColumn, x, 0);
+  }
+  oneColumn = cleanupGraphic(oneColumn);
+  const endTime = performance.now();
+  console.log(`[time] createFiller: ${(endTime - startTime).toFixed(4)} ms, ${((endTime - startTime) / 1000).toFixed(2)} s`);
   }
 
-  const createYoke = () => {
-    config.yoke.img = cleanupGraphic(config.yoke.img);
-    config.yoke.img = p.createGraphics(config.slice.outerRadius * 2, config.slice.outerRadius * 2);
-    config.yoke.img.imageMode(p.CENTER);
-    config.yoke.img.translate(config.slice.outerRadius, config.slice.outerRadius);
+const createFilledYoke = () => {
+  const startTime = performance.now();
 
-    for (let i = 0; i < config.slice.count; i++) {
-      drawSlice(i);
-    }
-  }
+  config.yoke.filledImg = cleanupGraphic(config.yoke.filledImg);
+  config.yoke.filledImg = p.createGraphics(config.texture.width, config.texture.height);
 
-  const createFiller = () => {
-    console.log('createFiller called!')
-    config.filler.img = cleanupGraphic(config.filler.img);
-    config.filler.img = p.createGraphics(config.texture.width, config.texture.height);
-    config.filler.img.imageMode(p.CORNER); 
+  drawFillerToCorner(0);
+  drawFillerToCorner(1);
+  drawFillerToCorner(2);
+  drawFillerToCorner(3);
 
-    // determine stitch size to visually match yoke's stitch size 
-    const scaledStitchWidth = config.stitch.width / (config.stitch.overlapFactor * config.slice.outerRadius * 2 / config.texture.width);
-    const fullStitchCount = Math.floor(config.texture.width / scaledStitchWidth);
-    const remainderWidth = config.texture.width - fullStitchCount * scaledStitchWidth;
-    const spacing = remainderWidth / fullStitchCount;
+  const sliceMaxRadius = config.slice.innerRadius + config.stitch.width * 0.5 + (getGridLength() - 1) * config.stitch.overlapFactor * config.stitch.width;
+  const eraseDiameter = sliceMaxRadius * config.texture.width / config.slice.outerRadius;
+  config.yoke.filledImg.erase();
+  config.yoke.filledImg.circle(config.texture.width * 0.5, config.texture.height * 0.5, eraseDiameter);
+  config.yoke.filledImg.noErase();
 
-    config.stitch.img.resize(scaledStitchWidth, 0);
+  config.yoke.filledImg.imageMode(p.CORNERS);
+  config.yoke.filledImg.image(config.yoke.img, 0, 0, config.texture.width, config.texture.height);
 
-    let oneColumn = p.createGraphics(scaledStitchWidth + spacing, config.texture.height);
-    for (let y = scaledStitchWidth * -config.stitch.overlapFactor; y < config.texture.height; y += scaledStitchWidth * config.stitch.overlapFactor) {
-      drawStitch(0, y, 0, palette[1].color, oneColumn);
-    }
+  const endTime = performance.now();
+  console.log(`[time] createFilledYoke: ${(endTime - startTime).toFixed(4)} ms, ${((endTime - startTime) / 1000).toFixed(2)} s`);
+}
 
-    for (let x = 0; x < config.texture.width; x += scaledStitchWidth + spacing) {
-      config.filler.img.image(oneColumn, x, 0);
-    }
-    oneColumn = cleanupGraphic(oneColumn);
-  }
+const drawFillerToCorner = (corner) => {
+  config.yoke.filledImg.push();
+  config.yoke.filledImg.translate(config.texture.width * 0.5, config.texture.height * 0.5);
+  config.yoke.filledImg.imageMode(p.CENTER);
+  config.yoke.filledImg.rectMode(p.CENTER);
+  config.yoke.filledImg.rotate(pi * -0.25 + pi * 0.5 * corner);
+  config.yoke.filledImg.translate(0, config.texture.height * 0.5);
+  config.yoke.filledImg.clip(cornerMask);
+  config.yoke.filledImg.image(config.filler.img, 0, 0);
+  config.yoke.filledImg.pop();
+}
 
-  const createFilledYoke = () => {
-    config.yoke.filledImg = cleanupGraphic(config.yoke.filledImg);
-    config.yoke.filledImg = p.createGraphics(config.texture.width, config.texture.height);
-
-    drawFillerToCorner(0);
-    drawFillerToCorner(1);
-    drawFillerToCorner(2);
-    drawFillerToCorner(3);
-
-    const sliceMaxRadius = config.slice.innerRadius + config.stitch.width * 0.5 + (getGridLength() - 1) * config.stitch.overlapFactor * config.stitch.width;
-    const eraseDiameter = sliceMaxRadius * config.texture.width / config.slice.outerRadius;
-    config.yoke.filledImg.erase();
-    config.yoke.filledImg.circle(config.texture.width * 0.5, config.texture.height * 0.5, eraseDiameter);
-    config.yoke.filledImg.noErase();
-
-    config.yoke.filledImg.imageMode(p.CORNERS);
-    config.yoke.filledImg.image(config.yoke.img, 0, 0, config.texture.width, config.texture.height);
-  }
-
-  const drawFillerToCorner = (corner) => {
-    config.yoke.filledImg.push();
-    config.yoke.filledImg.translate(config.texture.width * 0.5, config.texture.height * 0.5);
-    config.yoke.filledImg.imageMode(p.CENTER);
-    config.yoke.filledImg.rectMode(p.CENTER);
-    config.yoke.filledImg.rotate(pi * -0.25 + pi * 0.5 * corner);
-    config.yoke.filledImg.translate(0, config.texture.height * 0.5);
-    config.yoke.filledImg.clip(cornerMask);
-    config.yoke.filledImg.image(config.filler.img, 0, 0);
-    config.yoke.filledImg.pop();
-  }
-
-  const cornerMask = () => {
-    config.yoke.filledImg.triangle(0, config.texture.width * -0.5, config.texture.width, config.texture.width * 0.5, -config.texture.width, config.texture.width * 0.5);
-  }
+const cornerMask = () => {
+  config.yoke.filledImg.triangle(0, config.texture.width * -0.5, config.texture.width, config.texture.width * 0.5, -config.texture.width, config.texture.width * 0.5);
 }
 
 const cleanupGraphic = (graphic) => {
@@ -278,27 +293,35 @@ const easeOutExpo = t => t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
 const easeOutSine = t => Math.sin((t * Math.PI) / 2);
 
 watch(palette, () => {
-  p5Instance.redraw();
+  createYoke()
+  createFilledYoke();
+  p.redraw();
 })
 
-// watch(() => palette[1].color, () => {
-  // sketch.createFiller();
-// });
+watch(() => palette[1].color, () => {
+  createFiller();
+  createFilledYoke();
+  console.log('')
+});
 
 watch(grid, () => {
-  p5Instance.redraw();
+  createYoke();
+  createFilledYoke();
+  p.redraw();
 })
 
 watch(selectedTemplate, () => {
-  p5Instance.redraw();
+  createYoke();
+  createFilledYoke();
+  p.redraw();
 })
 
 onMounted(() => {
-  p5Instance = new p5(sketch, document.getElementById("2d-pattern-container"));
+  p = new p5(sketch, document.getElementById("2d-pattern-container"));
 });
 
 onBeforeUnmount(() => {
-  p5Instance.remove();
+  p.remove();
 });
 
 // checks if the previous row is one shorter
