@@ -8,7 +8,6 @@ import { selectedTemplate } from "@/templateStore";
 
 // TODO: clean package.json linter settings!
 
-// Draws the "donut" .png 
 let p5Instance;
 const pi = 3.141592653589793;
 const tau = 6.283185307179586;
@@ -43,14 +42,14 @@ let config = {
     }
   },
   yoke: {
-    img: null, // prev. donut
-    filledImg: null, // prev. filledYoke
+    img: null,
+    filledImg: null,
   },
   filler: {
-    img: null, // prev. fs
+    img: null,
   },
-  debug: false
 }
+
 
 const sketch = (p) => {
   p.preload = () => {
@@ -62,44 +61,36 @@ const sketch = (p) => {
     p.noLoop();
     p.imageMode(p.CORNERS);
     
-    // TODO: button / component to save .png
-    // Button
-    // let button = p.createButton('Save canvas');
-    // button.position(0, 950);
-    // button.mousePressed(() => test());
+    createFiller();
+
     let button = p.createButton('Save canvas');
     button.position(0, 950);
     button.mousePressed(() => {
       config.yoke.img.save("yoke.png")
       config.yoke.filledImg.save("filledyoke.png")
       config.filler.img.save("filler.png")
-
     });
   };
   
   p.draw = () => {
     let startTime = performance.now();
     p.background(172, 255);
+        
+    createSlice();
+    createYoke();
+    p.image(config.yoke.img, 0, 0, p.width, p.height);
+    createFilledYoke();
     
-    if (config.debug) {
-      p.stroke(255);
-      p.fill(145);
-      p.circle(0, 0, p.width);
-    }
-    
-      createSlice();
-      createYoke();
-      p.image(config.yoke.img, 0, 0, p.width, p.height);
-      createFiller();
-      createFilledYoke();
-      
-      let endTime = performance.now();
-      console.log(`Draw time: ${(endTime - startTime).toFixed(2)} ms, ${((endTime - startTime) / 1000).toFixed(2)} s`);
+    let endTime = performance.now();
+    console.log(`Draw time: ${(endTime - startTime).toFixed(2)} ms, ${((endTime - startTime) / 1000).toFixed(2)} s`);
     };
 
-  let createSlice = () => {
+  const createSlice = () => {
     const graphicHeight = config.slice.outerRadius * Math.tan(config.slice.angle * 0.5) * 2 + config.stitch.width;
     let slice = config.slice;
+
+    slice.img = cleanupGraphic(slice.img);
+
     slice.img = p.createGraphics(slice.outerRadius, graphicHeight);
     slice.img.imageMode(p.CENTER);
     slice.img.translate(0, graphicHeight * 0.5);
@@ -173,7 +164,7 @@ const sketch = (p) => {
     }
   }
 
-  let drawStitch = (x, y, angle, colorCode, target) => {
+  const drawStitch = (x, y, angle, colorCode, target) => {
     target.push();
     target.translate(x, y);
     target.rotate(angle);
@@ -182,7 +173,7 @@ const sketch = (p) => {
     target.pop();
   }
 
-  let drawSlice = (sliceNumber) => {
+  const drawSlice = (sliceNumber) => {
     const theta = config.slice.angle * sliceNumber;
     const r = config.slice.outerRadius * 0.5;
 
@@ -193,7 +184,8 @@ const sketch = (p) => {
     config.yoke.img.pop();
   }
 
-  let createYoke = () => {
+  const createYoke = () => {
+    config.yoke.img = cleanupGraphic(config.yoke.img);
     config.yoke.img = p.createGraphics(config.slice.outerRadius * 2, config.slice.outerRadius * 2);
     config.yoke.img.imageMode(p.CENTER);
     config.yoke.img.translate(config.slice.outerRadius, config.slice.outerRadius);
@@ -203,7 +195,9 @@ const sketch = (p) => {
     }
   }
 
-  let createFiller = () => {
+  const createFiller = () => {
+    console.log('createFiller called!')
+    config.filler.img = cleanupGraphic(config.filler.img);
     config.filler.img = p.createGraphics(config.texture.width, config.texture.height);
     config.filler.img.imageMode(p.CORNER); 
 
@@ -223,9 +217,11 @@ const sketch = (p) => {
     for (let x = 0; x < config.texture.width; x += scaledStitchWidth + spacing) {
       config.filler.img.image(oneColumn, x, 0);
     }
+    oneColumn = cleanupGraphic(oneColumn);
   }
 
-  let createFilledYoke = () => {
+  const createFilledYoke = () => {
+    config.yoke.filledImg = cleanupGraphic(config.yoke.filledImg);
     config.yoke.filledImg = p.createGraphics(config.texture.width, config.texture.height);
 
     drawFillerToCorner(0);
@@ -243,7 +239,7 @@ const sketch = (p) => {
     config.yoke.filledImg.image(config.yoke.img, 0, 0, config.texture.width, config.texture.height);
   }
 
-  let drawFillerToCorner = (corner) => {
+  const drawFillerToCorner = (corner) => {
     config.yoke.filledImg.push();
     config.yoke.filledImg.translate(config.texture.width * 0.5, config.texture.height * 0.5);
     config.yoke.filledImg.imageMode(p.CENTER);
@@ -255,14 +251,20 @@ const sketch = (p) => {
     config.yoke.filledImg.pop();
   }
 
-  let cornerMask = () => {
+  const cornerMask = () => {
     config.yoke.filledImg.triangle(0, config.texture.width * -0.5, config.texture.width, config.texture.width * 0.5, -config.texture.width, config.texture.width * 0.5);
   }
 }
 
-// TODO: check if all arrow functions can be const?
+const cleanupGraphic = (graphic) => {
+  if (!graphic){
+    return null
+  }
+  graphic.remove();
+  return undefined;
+}
 
-let mapCurve = (value, inMin, inMax, outMin, outMax, easingFn) => {
+const mapCurve = (value, inMin, inMax, outMin, outMax, easingFn) => {
   let t = (value - inMin) / (inMax - inMin);
   t = easingFn(t);
   return outMin + (outMax - outMin) * t;
@@ -278,6 +280,10 @@ const easeOutSine = t => Math.sin((t * Math.PI) / 2);
 watch(palette, () => {
   p5Instance.redraw();
 })
+
+// watch(() => palette[1].color, () => {
+  // sketch.createFiller();
+// });
 
 watch(grid, () => {
   p5Instance.redraw();
@@ -296,7 +302,7 @@ onBeforeUnmount(() => {
 });
 
 // checks if the previous row is one shorter
-let isMerging = (currentIndex) => {
+const isMerging = (currentIndex) => {
   if (currentIndex === 0) {
     return false;
   }
@@ -305,10 +311,10 @@ let isMerging = (currentIndex) => {
   return (currentRowLength - previousRowLength === 1);
 }
 
-let polarToX = (r, theta) => {
+const polarToX = (r, theta) => {
   return r * Math.cos(theta);
 }
-let polarToY = (r, theta) => {
+const polarToY = (r, theta) => {
   return r * Math.sin(theta);
 }
 </script>
