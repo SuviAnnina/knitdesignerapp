@@ -126,7 +126,9 @@ const createSlice = () => {
   
   for (let y = 0; y < getGridLength(); y++) {
     let row = getRow(y);
-    let spread = mapCurve(y, 0, getGridLength(), 1.45, 1, easeOutQuad);
+    // 1.45 is spread at inner radius, easing function tells how to reach 1.0
+    // let spread = mapCurve(y, 0, getGridLength(), 1.45, 1, easeOutQuad);
+    let spread = mapCurve(y, 0, getGridLength(), 1.45, 1, easeOutCirc); // best
     // let spread = mapCurve(y, 0, getGridLength(), 1.45, 1, easeOutCubic);
     // let spread = mapCurve(y, 0, getGridLength(), 1.45, 1, easeOutQuart);
     // let spread = mapCurve(y, 0, getGridLength(), 1.45, 1, easeOutQuint);
@@ -291,6 +293,8 @@ const easeOutQuart = t => 1 - Math.pow(1 - t, 4);
 const easeOutQuint = t => 1 - Math.pow(1 - t, 5);
 const easeOutExpo = t => t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
 const easeOutSine = t => Math.sin((t * Math.PI) / 2);
+const easeOutCirc = t => Math.sqrt(1 - Math.pow(t - 1, 2));
+
 
 watch(palette, () => {
   createYoke()
