@@ -52,12 +52,16 @@ const sketch = (p) => {
         }
         const x = p.floor(p.mouseX / squareWidth);
         let y = p.floor(p.mouseY / squareWidth);
-
-        const row = getRow(y);
+        
         // clicking outside visible grid does nothing
-        if ( row[x] === 0) {
+        if (y >= getGridLength() || x >= 8){
           return
         }
+        const row = getRow(y);
+        if ( row[x] === 0 ) {
+          return
+        }
+
         // sets square to chosen color or main color
         if (row[x] !== selectedColorIndex.value){
           setGridValue(x, y, selectedColorIndex.value);
