@@ -13,6 +13,7 @@
     "knitdesignerapp": "file:",
     "lightvue": "^1.5.1",
     "p5": "^1.11.3",
+    "three": "^0.174.0",
     "vue": "^3.2.13"
   },
   "devDependencies": {
@@ -37,7 +38,9 @@
       "parser": "@babel/eslint-parser"
     },
     "rules": {
-      "no-unused-vars": "off"
+      "no-unused-vars": "off",
+      "no-undef": "off",
+      "no-const-assign": "off"
     }
   },
   "browserslist": [

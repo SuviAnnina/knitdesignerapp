@@ -13,14 +13,14 @@ const handleAddColorPicker = () => {
     if (emptySlotIndex) {
         updateColor(emptySlotIndex, '#ffffff');
         updateShow(emptySlotIndex, true);
-        console.log('empty slot index:',emptySlotIndex);
+        // console.log('empty slot index:',emptySlotIndex);
     } 
     else {
         alert("You can't add more than 8 colors!");
     }
-    for (const color in palette){
-        console.log(`${color}: ${palette[color].color}`);
-    }
+    // for (const color in palette){
+    //     console.log(`${color}: ${palette[color].color}`);
+    // }
 };
 
 </script>

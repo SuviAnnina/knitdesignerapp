@@ -9,22 +9,22 @@ const props = defineProps({
 const color = ref(palette[props.index].color);
 
 watch(color, (newColor) => {
-    console.log("vanha väri: ", palette[props.index].color);
+    // console.log("vanha väri: ", palette[props.index].color);
     updateColor(props.index, newColor);
-    console.log("uusi väri: ", palette[props.index].color)
+    // console.log("uusi väri: ", palette[props.index].color)
 });
 
 const handleDeleteColorPicker = (index) => {
     setColorEmpty(index);
     updateShow(index, false);
-    console.log("poistetulta indeksipaikalta väritsekki, pitäs olla tyhjä: ", palette[index].color);
+    // console.log("poistetulta indeksipaikalta väritsekki, pitäs olla tyhjä: ", palette[index].color);
 }
 
 const handleSelectedColor = (index) => {
-    console.log('default(1)/old selected color index : ', selectedColorIndex.value);
-    console.log('clicked index: ',index);
+    // console.log('default(1)/old selected color index : ', selectedColorIndex.value);
+    // console.log('clicked index: ',index);
     changeSelectedColor(index);
-    console.log('updated selected color index: ', selectedColorIndex.value);
+    // console.log('updated selected color index: ', selectedColorIndex.value);
 } 
 </script>
 

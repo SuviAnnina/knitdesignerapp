@@ -3,6 +3,7 @@ import YarnManager from './components/YarnManager.vue';
 import P5Grid from './components/P5Grid.vue';
 import { onMounted, onUnmounted } from "vue";
 import PatternImage from './components/PatternImage.vue';
+import KnitModel from './components/KnitModel.vue';
 
 const handleBeforeUnload = (event) => {
   event.preventDefault();
@@ -20,12 +21,15 @@ onUnmounted(() => {
 
 <template>
   <div>
-    <YarnManager />
     <br/>
     <br/>
     <div class="container">
+      <YarnManager />
       <P5Grid />
-      <PatternImage />
+      <div id="lookies">
+        <PatternImage />
+        <KnitModel />
+      </div>
     </div>
   </div>
 </template>

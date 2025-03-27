@@ -5,6 +5,7 @@ import { grid } from "@/gridStore";
 import p5 from "p5";
 import { getGridLength, getRowLength, getRow } from "@/gridStore";
 import { selectedTemplate } from "@/templateStore";
+import { setFillerTexture, setFilledYokeTexture , filledYokeTexture } from "@/textureStore";
 
 // TODO: clean package.json linter settings!
 
@@ -56,7 +57,9 @@ const sketch = (p5Instance) => {
   }
 
   p5Instance.setup = () => {
-    p5Instance.createCanvas(config.canvas.width, config.canvas.height);
+    // TODO: teehee
+    p5Instance.createCanvas(200, 200);
+    // p5Instance.createCanvas(config.canvas.width, config.canvas.height);
     p5Instance.noLoop();
     p5Instance.imageMode(p5Instance.CORNERS);
     
@@ -228,6 +231,9 @@ const createFiller = () => {
   for (let x = 0; x < config.texture.width; x += scaledStitchWidth + spacing) {
     config.filler.img.image(oneColumn, x, 0);
   }
+
+  setFillerTexture(config.filler.img);
+
   oneColumn = cleanupGraphic(oneColumn);
   const endTime = performance.now();
   console.log(`[time] createFiller: ${(endTime - startTime).toFixed(4)} ms, ${((endTime - startTime) / 1000).toFixed(2)} s`);
@@ -252,6 +258,10 @@ const createFilledYoke = () => {
 
   config.yoke.filledImg.imageMode(p.CORNERS);
   config.yoke.filledImg.image(config.yoke.img, 0, 0, config.texture.width, config.texture.height);
+
+    console.log("fillledYokeTexture in store: ", filledYokeTexture.value)
+    setFilledYokeTexture(config.yoke.filledImg);
+    console.log("fillledYokeTexture in store after setting: ", filledYokeTexture.value)
 
   const endTime = performance.now();
   console.log(`[time] createFilledYoke: ${(endTime - startTime).toFixed(4)} ms, ${((endTime - startTime) / 1000).toFixed(2)} s`);
