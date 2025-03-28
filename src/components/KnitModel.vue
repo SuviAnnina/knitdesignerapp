@@ -3,48 +3,74 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { fillerTexture, filledYokeTexture } from '@/textureStore';
-import { onBeforeMount, onBeforeUnmount, onMounted, onUnmounted, watch } from 'vue';
+import { onBeforeUnmount, onMounted, watch, watchEffect } from 'vue';
 
 let scene, camera, controls, renderer;
 let cube, geometry, texture, filler, material;
 
+scene = new THREE.Scene();
+camera = new THREE.PerspectiveCamera(66, window.innerWidth / window.innerHeight, 0.1, 1000);
+renderer = new THREE.WebGLRenderer();
+controls = new OrbitControls(camera, renderer.domElement);
+// const loader = new GLTFLoader();
+// const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+renderer.setSize(window.innerWidth * 0.5, window.innerHeight * 0.5);
+// renderer.setSize(window.innerWidth, window.innerHeight);
+// document.body.appendChild(renderer.domElement);
+scene.background = new THREE.Color(0xe0e0e0);
+// scene.add(directionalLight);
+
+camera.position.set(0, 0, 3);
+controls.update();  
+
+geometry = new THREE.BoxGeometry();
+
+
+async function loadFiller() {
+  while (!fillerTexture.value) {
+    await new Promise(resolve => setTimeout(resolve, 50));
+  }
+  filler = fillerTexture.value.canvas;
+  texture = new THREE.CanvasTexture(filler);
+  material = new THREE.MeshBasicMaterial({map: texture});
+  cube = new THREE.Mesh(geometry, material);
+}
+
 const updateTexture = () => {
-  if (fillerTexture.value) {
+  if (fillerTexture.value && texture) {
     texture.image = fillerTexture.value.canvas;
     texture.needsUpdate = true;
   }
 };
 
-onMounted(() => {
-    scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(66, window.innerWidth / window.innerHeight, 0.1, 1000);
-    renderer = new THREE.WebGLRenderer();
-    controls = new OrbitControls(camera, renderer.domElement);
-    // const loader = new GLTFLoader();
-    // const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
-    renderer.setSize(window.innerWidth * 0.5, window.innerHeight * 0.5);
-    // renderer.setSize(window.innerWidth, window.innerHeight);
-    document.getElementById("lookies").appendChild(renderer.domElement);
-    // document.body.appendChild(renderer.domElement);
-    scene.background = new THREE.Color(0xe0e0e0);
-    // scene.add(directionalLight);
+watchEffect(updateTexture);
 
-    camera.position.set(0, 0, 3);
-    controls.update();  
-    
-    geometry = new THREE.BoxGeometry();
-    loadFiller();
-    texture = new THREE.CanvasTexture(filler);
-    material = new THREE.MeshBasicMaterial({map: texture});
-    cube = new THREE.Mesh(geometry, material);
-    scene.add(cube);
+function animate() {
+  requestAnimationFrame(animate);
+  
+  if (cube) {
+    cube.rotation.x += 0.01;
+    cube.rotation.y += 0.01;
+  }
+  
+  controls.update();
+  // texture.needsUpdate is checked during render()
+  renderer.render(scene, camera);
+}
 
-    animate();
+watch(fillerTexture, () => {
+  updateTexture();
 })
 
+onMounted(() => {
+  document.getElementById("lookies").appendChild(renderer.domElement);
+  loadFiller().then(() => {
+    if (cube) scene.add(cube);
+    animate();
+  });
+})
 
 onBeforeUnmount(() => {
-    console.log('starting unmounting...')
     scene.traverse((object) => {
     if (object.geometry) object.geometry.dispose();
     if (object.material) {
@@ -66,49 +92,7 @@ onBeforeUnmount(() => {
   if (renderer.domElement) {
     renderer.domElement.remove();
   }
-
-  console.log('end..')
 })
-
-// // use onBefore rather than on
-// onUnmounted(() => {
-//     console.log('Yello!')
-//     console.log('Check')
-//     scene.remove(cube)
-//     // geometry.dispose()
-//     material.dispose()
-//     texture.dispose()
-    // scene.dispose()
-    // THREE.BufferGeometry.dispose()
-    // THREE.Material.dispose()
-    // THREE.Texture.dispose()
-    // cube.dispose()
-    // camera.dispose()
-// })
-
-function animate() {
-    requestAnimationFrame(animate);
-    
-    if (cube) {
-        cube.rotation.x += 0.01;
-        cube.rotation.y += 0.01;
-    }
-    
-    controls.update();
-    // texture.needsUpdate is checked during render()
-    renderer.render(scene, camera);
-}
-
-watch(fillerTexture, () => {
-        updateTexture();
-})
-
-async function loadFiller() {
-    while (!fillerTexture.value) {
-        await new Promise(resolve => setTimeout(resolve, 50));
-    }
-    filler = fillerTexture.value.canvas;
-}
 
 // async function load() {
 //     let canvas = document.getElementById("p5canvas");
