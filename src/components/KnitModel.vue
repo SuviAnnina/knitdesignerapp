@@ -5,20 +5,24 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { fillerTexture, filledYokeTexture} from '@/textureStore';
 import { onBeforeUnmount, onMounted, watchEffect } from 'vue';
 
-let scene, camera, controls, renderer;
-let texture, yokeTexture, filler, filledYoke, material, yokeMaterial, loader;
+let texture, yokeTexture, filler, filledYoke, material, yokeMaterial;
 
-scene = new THREE.Scene();
-camera = new THREE.PerspectiveCamera(66, window.innerWidth / window.innerHeight, 0.1, 1000);
-renderer = new THREE.WebGLRenderer();
-renderer = new THREE.WebGLRenderer();
-controls = new OrbitControls(camera, renderer.domElement);
-loader = new GLTFLoader();
-const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(66, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer();
+const controls = new OrbitControls(camera, renderer.domElement);
+const loader = new GLTFLoader();
+const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+directionalLight.position.set(10, 10, 10);
+directionalLight.castShadow = true;
 renderer.setSize(window.innerWidth * 0.5, window.innerHeight * 0.5);
 // renderer.setSize(window.innerWidth, window.innerHeight);
 scene.background = new THREE.Color(0xe0e0e0);
 scene.add(directionalLight);
+
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Soft shadows
+
 
 camera.position.set(0, 0, 3);
 controls.update();  
@@ -34,7 +38,7 @@ const loadFiller = async () => {
   material = new THREE.MeshBasicMaterial({map: texture});
   texture.offset.set(0.785, -0.785);
   texture.center.set(0.5, 0.5);
-  texture.repeat.set(2.1, 2.1);
+  texture.repeat.set(3.3, 3.3);
   texture.rotation = Math.PI / 2;
   texture.wrapS = THREE.RepeatWrapping; // repeat horizontally
   texture.wrapT = THREE.RepeatWrapping; // repeat vertically
@@ -42,17 +46,18 @@ const loadFiller = async () => {
   filledYoke = filledYokeTexture.value.canvas;
   yokeTexture = new THREE.CanvasTexture(filledYoke);
   yokeMaterial = new THREE.MeshBasicMaterial({map: yokeTexture});
-  yokeTexture.offset.set(0.700, -0.700); // moves left/right (U) and up/down (V)
+  yokeTexture.offset.set(0.780, -0.790); // moves left/right (U) and up/down (V)
   yokeTexture.center.set(0.5, 0.5);
-  yokeTexture.repeat.set(2.5, 2.5); // scale the yokeTexture along uv map - repeats yokeTexture in U and V direction;
-  yokeTexture.wrapS = THREE.RepeatWrapping; 
-  yokeTexture.wrapT = THREE.RepeatWrapping;
+  yokeTexture.repeat.set(2.8, 2.8); // scale the yokeTexture along uv map - repeats yokeTexture in U and V direction;
+  // yokeTexture.wrapS = THREE.RepeatWrapping; 
+  // yokeTexture.wrapT = THREE.RepeatWrapping;
 
   loader.load('/knit3DModel/knitAngleBased.glb', function (gltf) {
-
     try {
       gltf.scene.traverse((child) => {
               if (child.isMesh) {
+                child.castShadow = true;
+                child.receiveShadow = true;
                   if (child.material.name === "Yoke") {
                       child.material = yokeMaterial; 
                   } else if (child.material.name === "Sleeves") {
@@ -167,4 +172,3 @@ onBeforeUnmount(() => {
 
 <style>
 </style>
-
