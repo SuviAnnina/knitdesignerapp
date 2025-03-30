@@ -11,6 +11,7 @@ let texture, yokeTexture, filler, filledYoke, material, yokeMaterial, loader;
 scene = new THREE.Scene();
 camera = new THREE.PerspectiveCamera(66, window.innerWidth / window.innerHeight, 0.1, 1000);
 renderer = new THREE.WebGLRenderer();
+renderer = new THREE.WebGLRenderer();
 controls = new OrbitControls(camera, renderer.domElement);
 loader = new GLTFLoader();
 const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
@@ -26,13 +27,26 @@ const loadFiller = async () => {
   while (!fillerTexture.value && !filledYokeTexture.value) {
     await new Promise(resolve => setTimeout(resolve, 50));
   }
+  // TODO: fix 3D model (separate sleeves, body front/back + fix stretch, sleeve positions)
+  // TODO: map textures to each knit part correctly
   filler = fillerTexture.value.canvas;
   texture = new THREE.CanvasTexture(filler);
   material = new THREE.MeshBasicMaterial({map: texture});
+  texture.offset.set(0.785, -0.785);
+  texture.center.set(0.5, 0.5);
+  texture.repeat.set(2.1, 2.1);
+  texture.rotation = Math.PI / 2;
+  texture.wrapS = THREE.RepeatWrapping; // repeat horizontally
+  texture.wrapT = THREE.RepeatWrapping; // repeat vertically
 
   filledYoke = filledYokeTexture.value.canvas;
   yokeTexture = new THREE.CanvasTexture(filledYoke);
   yokeMaterial = new THREE.MeshBasicMaterial({map: yokeTexture});
+  yokeTexture.offset.set(0.700, -0.700); // moves left/right (U) and up/down (V)
+  yokeTexture.center.set(0.5, 0.5);
+  yokeTexture.repeat.set(2.5, 2.5); // scale the yokeTexture along uv map - repeats yokeTexture in U and V direction;
+  yokeTexture.wrapS = THREE.RepeatWrapping; 
+  yokeTexture.wrapT = THREE.RepeatWrapping;
 
   loader.load('/knit3DModel/knitAngleBased.glb', function (gltf) {
 
@@ -62,6 +76,11 @@ const updateTexture = () => {
   if (fillerTexture.value && texture) {
     texture.image = fillerTexture.value.canvas;
     texture.needsUpdate = true;
+  }
+
+  if (filledYokeTexture.value && yokeTexture){
+    yokeTexture.image = filledYokeTexture.value.canvas;
+    yokeTexture.needsUpdate = true;
   }
 };
 
