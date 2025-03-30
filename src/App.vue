@@ -26,7 +26,7 @@ onUnmounted(() => {
     <div class="container">
       <YarnManager />
       <P5Grid />
-      <div id="lookies">
+      <div id="renderKnitModel">
         <PatternImage />
         <KnitModel />
       </div>
