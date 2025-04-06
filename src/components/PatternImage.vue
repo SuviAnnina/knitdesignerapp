@@ -57,9 +57,7 @@ const sketch = (p5Instance) => {
   }
 
   p5Instance.setup = () => {
-    // TODO: teehee
-    p5Instance.createCanvas(200, 200);
-    // p5Instance.createCanvas(config.canvas.width, config.canvas.height);
+    p5Instance.createCanvas(config.canvas.width, config.canvas.height);
     p5Instance.noLoop();
     p5Instance.imageMode(p5Instance.CORNERS);
     
@@ -112,7 +110,7 @@ const createSlice = () => {
   let leanPairIndex = 0;
   const leanPairs = [[4, 5, false], [1, 2, true], [5, 6, false], [0, 1, true], [6, 7, false]];
 
-  const coefficients = [ //TODO: do some more tuning to make ~prettie~
+  const coefficients = [
     [],
     [],
     [],
@@ -130,13 +128,7 @@ const createSlice = () => {
   for (let y = 0; y < getGridLength(); y++) {
     let row = getRow(y);
     // 1.45 is spread at inner radius, easing function tells how to reach 1.0
-    // let spread = mapCurve(y, 0, getGridLength(), 1.45, 1, easeOutQuad);
-    let spread = mapCurve(y, 0, getGridLength(), 1.45, 1, easeOutCirc); // best
-    // let spread = mapCurve(y, 0, getGridLength(), 1.45, 1, easeOutCubic);
-    // let spread = mapCurve(y, 0, getGridLength(), 1.45, 1, easeOutQuart);
-    // let spread = mapCurve(y, 0, getGridLength(), 1.45, 1, easeOutQuint);
-    // let spread = mapCurve(y, 0, getGridLength(), 1.45, 1, easeOutExpo);
-    // let spread = mapCurve(y, 0, getGridLength(), 1.45, 1, easeOutSine);
+    let spread = mapCurve(y, 0, getGridLength(), 1.45, 1, easeOutCirc);
     let r = config.slice.innerRadius + config.stitch.width * 0.5 + y * spacing;
     let needsLean = isMerging(y);
     for (let x = 0; x < 8; x++) {
@@ -201,6 +193,7 @@ const createYoke = () => {
   config.yoke.img.imageMode(p.CENTER);
   config.yoke.img.translate(config.slice.outerRadius, config.slice.outerRadius);
 
+  // drawSlice(0);
 
   for (let i = 0; i < config.slice.count; i++) {
     drawSlice(i);
@@ -297,14 +290,7 @@ const mapCurve = (value, inMin, inMax, outMin, outMax, easingFn) => {
   return outMin + (outMax - outMin) * t;
 }
 
-const easeOutQuad = t => t * (2 - t);
-const easeOutCubic = t => 1 - Math.pow(1 - t, 3);
-const easeOutQuart = t => 1 - Math.pow(1 - t, 4);
-const easeOutQuint = t => 1 - Math.pow(1 - t, 5);
-const easeOutExpo = t => t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
-const easeOutSine = t => Math.sin((t * Math.PI) / 2);
 const easeOutCirc = t => Math.sqrt(1 - Math.pow(t - 1, 2));
-
 
 watch(palette, () => {
   createYoke()
@@ -315,7 +301,6 @@ watch(palette, () => {
 watch(() => palette[1].color, () => {
   createFiller();
   createFilledYoke();
-  console.log('')
 });
 
 watch(grid, () => {

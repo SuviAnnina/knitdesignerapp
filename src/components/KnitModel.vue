@@ -22,17 +22,15 @@ scene.add(directionalLight);
 
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Soft shadows
+controls.enablePan = true;
 
-
-camera.position.set(0, 0, 3);
+camera.position.set(0, 1, 2);
 controls.update();  
 
 const loadFiller = async () => {
   while (!fillerTexture.value && !filledYokeTexture.value) {
     await new Promise(resolve => setTimeout(resolve, 50));
   }
-  // TODO: fix 3D model (separate sleeves, body front/back + fix stretch, sleeve positions)
-  // TODO: map textures to each knit part correctly
   filler = fillerTexture.value.canvas;
   texture = new THREE.CanvasTexture(filler);
   material = new THREE.MeshBasicMaterial({map: texture});
@@ -104,30 +102,6 @@ onMounted(() => {
     animate();
   });
 })
-
-// onBeforeUnmount(() => {
-//     scene.traverse((object) => {
-//     if (object.geometry) object.geometry.dispose();
-//     if (object.material) {
-//       if (Array.isArray(object.material)) {
-//         object.material.forEach((mat) => mat.dispose());
-//       } else {
-//         object.material.dispose();
-//       }
-//     }
-//     if (object.texture) object.texture.dispose();
-//   });
-
-//   while (scene.children.length > 0) {
-//     scene.remove(scene.children[0]);
-//   }
-
-//   renderer.dispose();
-
-//   if (renderer.domElement) {
-//     renderer.domElement.remove();
-//   }
-// })
 
 onBeforeUnmount(() => {
   scene.traverse((object) => {
